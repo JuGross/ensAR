@@ -1,9 +1,9 @@
-#' CRPS for a Mixture of two Normals
+#' CRPS for a Normal or a Mixture of two Normals
 #' @export
 #' @importFrom stats pnorm dnorm
 #' @description Computes the continuous ranked probability score
 #' (CRPS) of given observations when the predictive distribution is
-#' a mixture of two normals.
+#' the normal distribution or a mixture of two normals.
 #'
 #' @param x A vector of observations for which the CRPS is to be computed.
 #' @param mu1 A vector of expectations of the first normal. Must be of the same length as \code{x}.
@@ -22,17 +22,21 @@
 #'verification. \emph{Quarterly Journal of the Royal Meteorological
 #'Society}, \strong{132}, 2925--2942.
 #'@examples
-#'crps_norm_mixture(0.5, -1, 1, 2, 1, 0.2)
-crps_norm_mixture <- function(x, mu1, sd1, mu2, sd2, w1 = 0.5) {
+#'crps_norm(0.5, -1, 1, 2, 1, 0.2)
+crps_norm <- function(x, mu1, sd1, mu2 = mu1, sd2 = sd1, w1 = 1) {
     A <- function(m, s) {
         z <- m/s
         2 * s * dnorm(z) + m * (2 * pnorm(z) - 1)
     }
     w2 <- 1 - w1
-    val <- w1 * A((x - mu1), sd1) + w2 * A((x - mu2), sd2) - 0.5 * ((w1^2) *
-        A(0, sqrt(2 * sd1^2)) + w1 * w2 * A((mu1 - mu2), sqrt(sd1^2 + sd2^2)) +
-        w2 * w1 * A((mu2 - mu1), sqrt(sd1^2 + sd2^2)) + (w2^2) * A(0, sqrt(2 *
-        sd2^2)))
+    val_1 <- w1 * A((x - mu1), sd1)
+    if (w2 == 0) {val <- val_1} else {
+    val <- val_1 + w2 * A((x - mu2), sd2) -
+      0.5 * ((w1^2) * A(0, sqrt(2 * sd1^2)) +
+               w1 * w2 * A((mu1 - mu2), sqrt(sd1^2 + sd2^2)) +
+               w2 * w1 * A((mu2 - mu1), sqrt(sd1^2 + sd2^2)) +
+               (w2^2) * A(0, sqrt(2 * sd2^2)))
+    }
     val
 }
 #' Verification Statistics
@@ -105,7 +109,7 @@ veri_stats <- function(x, pred_one = list(mean = NULL, sd = NULL),
         var_comb <- w1 * (mu1^2 + sd1^2) + w2 * (mu2^2 + sd2^2) - mu_comb^2
         dss <- ((x - mu_comb)^2)/var_comb + 2 * log(sqrt(var_comb))
         predvariance <- var_comb
-        crps <- crps_norm_mixture(x = x, mu1 = mu1, sd1 = sd1, mu2 = mu2,
+        crps <- crps_norm(x = x, mu1 = mu1, sd1 = sd1, mu2 = mu2,
             sd2 = sd2, w1 = w1)
     }
     pit_var <- var(pit, na.rm = TRUE)

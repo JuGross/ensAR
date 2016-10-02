@@ -128,44 +128,47 @@ ar_ensemble <- function(ens, obs_col, mem_col, train = 90) {
 #' the predictive standard deviation \code{sd}.
 #' @author J. Gross, A. Moeller.
 ar_preddistr <- function(ar_ens, train = 30) {
-    if(!(class(ar_ens) == "ar_ens")) stop("input must be of class 'ar_ens'")
-    train_length <- train
-    y <- ar_ens$observation
-    mu_out <- apply(ar_ens$forecast, 1, mean)
-    sample_sd <- function(x) sqrt(mean(scale(x, scale = FALSE)^2))
-    sd_out_2 <- apply(ar_ens$forecast, 1, sample_sd)
-    sd_out <- sqrt(apply(ar_ens$variance, 1, mean))
-    # --
-    verification_period <- (train_length + 1):nrow(ar_ens$forecast)
-    # --
-    if (train_length == 0) {
-        w_out <- rep(1, length(verification_period))
-    }
-    if (train_length > 0) {
-        # --
-        roll_preddistr <- function(verification_day) {
-            train_period <- (verification_day - (train_length:1))
-            m_crps <- function(par) {
-                m_obs <- y[train_period]
-                m_mu <- mu_out[train_period]
-                m_sd <- par[1] * sd_out[train_period] +
-                  (1 - par[1]) * sd_out_2[train_period]
-                z <- (m_obs - m_mu)/m_sd
-                crps_norm <- m_sd * (z * (2 * pnorm(z) - 1) +
+  if(!(class(ar_ens) == "ar_ens"))
+    stop("input must be of class 'ar_ens'")
+  y <- ar_ens$observation
+  n <- length(y)
+  m <- train
+  if(n <= m) stop("too less observations")
+  sample_sd <- function(x) sqrt(mean(scale(x, scale = FALSE)^2))
+  # length n objects
+  mu_out <- apply(ar_ens$forecast, 1, mean)
+  sd_out_1 <- sqrt(apply(ar_ens$variance, 1, mean))
+  sd_out_2 <- apply(ar_ens$forecast, 1, sample_sd)
+  # length n - m objects
+  v_period <- (m + 1):n
+  w_out <- rep(1, (n - m))
+  sd_out <- sd_out_1[v_period]
+  # recomputation of w_out and sd_out in case m > 0
+  if (m > 0) {
+    roll_preddistr <- function(v_day) {
+      train_period <- (v_day - (m:1))
+      m_crps <- function(par) {
+        m_obs <- y[train_period]
+        m_mu <- mu_out[train_period]
+        m_sd <- par[1] * sd_out_1[train_period] +
+          (1 - par[1]) * sd_out_2[train_period]
+        #vals <- crps_norm(m_obs, m_mu, m_sd)
+        z <- (m_obs - m_mu)/m_sd
+        vals <- m_sd * (z * (2 * pnorm(z) - 1) +
                                        2 * dnorm(z) - 1/sqrt(pi))
-                mean(crps_norm)
-            }
-            res <- optim(par = c(w = 0.5), fn = m_crps, method = "L-BFGS-B",
-                lower = 0, upper = 1)
-            res_para <- res$par["w"]
+        mean(vals)
         }
-        w_out <- vapply(verification_period, roll_preddistr, numeric(1))
-        mu_out <- mu_out[verification_period]
-        sd_out <- w_out * (sd_out[verification_period]) + (1 - w_out) * sd_out_2[verification_period]
-        }
-    out <- cbind(obs = y[verification_period], mu = mu_out, sd = sd_out, w = w_out,
-        ar_ens$additional[verification_period, ])
-    out
+      res <- optim(par = c(w = 0.5), fn = m_crps, method = "L-BFGS-B",
+                   lower = 0, upper = 1)
+      res$par["w"]
+      }
+    w_out <- vapply(v_period, roll_preddistr, numeric(1))
+    #sd_out <- w_out * (sd_out_1[v_period]) + (1 - w_out) * sd_out_2[v_period]
+    sd_out <- cx_comb(sd_out_1[v_period], sd_out_2[v_period], w_out)
+    }
+  out <- cbind(obs = y[v_period], mu = mu_out[v_period],
+               sd = sd_out, w = w_out, ar_ens$additional[v_period, ])
+  out
 }
 #' AR Ensemble and Predictive Distribution
 #' @export

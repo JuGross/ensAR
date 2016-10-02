@@ -55,7 +55,7 @@ corresponding to \code{pred_one}) and common scale
 parameter \code{scale}.
 }
 \examples{
-veri_stats(17.5, pred_one = list(mean = 15,sd = 1))
+veri_stats(17.5, pred_one = list(mean = 15, sd = 1))
 }
 \author{
 J. Gross, A. Moeller.

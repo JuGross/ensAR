@@ -29,6 +29,9 @@ A list with two elements \code{mu} (predictive mean) and
 Computes the predictive mean and predictive standard
 deviation of the SLP of two normals.
 }
+\examples{
+slp_moments(pred_one = list(mean = 15, sd = 0.8), pred_two = list(mean = 18, sd = 1))
+}
 \author{
 J. Gross, A. Moeller.
 }

@@ -59,9 +59,9 @@ combineSLP <- function(x, pred_one = list(mean = NULL, sd = NULL),
             r_mu2 <- mu2[train_period]
             r_sd2 <- sd2[train_period] * r_ct
 
-            crps_out <- crps_norm_mixture(x = r_obs, mu1 = r_mu1,
-                                          sd1 = r_sd1, mu2 = r_mu2,
-                                          sd2 = r_sd2, w1 = r_w1)
+            crps_out <- crps_norm(x = r_obs, mu1 = r_mu1,
+                                  sd1 = r_sd1, mu2 = r_mu2,
+                                  sd2 = r_sd2, w1 = r_w1)
 
             crps.comb <- mean(crps_out)
             return(crps.comb)
@@ -97,7 +97,8 @@ combineSLP <- function(x, pred_one = list(mean = NULL, sd = NULL),
 #' @param scale A vector of scale values.
 #' @return A list with two elements \code{mu} (predictive mean) and
 #' \code{sd} (predictive standard deviation) of the SLP combination.
-#'
+#' @examples
+#' slp_moments(pred_one = list(mean = 15, sd = 0.8), pred_two = list(mean = 18, sd = 1))
 #' @author J. Gross, A. Moeller.
 #'
 slp_moments <- function(pred_one = list(mean = NULL, sd = NULL),
