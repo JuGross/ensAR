@@ -1,0 +1,17 @@
+Package: ensAR
+Date: 2016-01-01
+Title: Autoregressive postprocessing methods for ensemble forecasts
+Version: 0.0.0.9000
+Authors@R: c(person("Juergen", "Gross", email = "juergen.gross@tu-dortmund.de", role = c("aut", "cre")),
+  person("Annette", "Moeller", email = "standardabweichung@yahoo.de", role = c("aut")))
+Description: Establishes functions for applying autoregressive
+  postprocessing methods to forecast ensembles.
+Imports:
+  chron,
+  zoo
+Depends:
+    R (>= 3.2.3)
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 5.0.1
