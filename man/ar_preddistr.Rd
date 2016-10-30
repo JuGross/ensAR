@@ -2,7 +2,7 @@
 % Please edit documentation in R/ens_ensemble_functions.R
 \name{ar_preddistr}
 \alias{ar_preddistr}
-\title{Predictive Normal Distribution from an AR Ensemble}
+\title{Predictive Moments from an AR Ensemble}
 \usage{
 ar_preddistr(ar_ens, train = 30)
 }
@@ -17,7 +17,7 @@ the predictive standard deviation \code{sd}.
 }
 \description{
 Computes the predictive mean and predictive standard
-deviation of the predictive normal distribution based on a
+deviation based on a
 model designed to handle an AR modified ensemble by \code{\link{ar_ensemble}}.
 }
 \details{
@@ -29,7 +29,7 @@ of AR variances (data frame \code{variance} from \code{ar.ens}). The second one
 is the sample standard deviation (with denominator \eqn{n}, not \eqn{n-1})
 of the AR modified ensemble members.
 The weights are chosen in order to minimize the average CRPS computed from a rolling
-training period of length \code{train}.
+training period of length \code{train} and assuming a predictive Gaussian distribution.
 }
 \author{
 J. Gross, A. Moeller.

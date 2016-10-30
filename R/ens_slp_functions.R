@@ -10,7 +10,7 @@
 #' of the same length as \code{x} respectively, providing parameters of the second
 #' normal predictive distribution.
 #' @param weight_grid The possible values of the SLP weight.
-#' @param scale_grid The possible vlaues of the SLP scale parameter.
+#' @param scale_grid The possible values of the SLP scale parameter.
 #' @param train The length of the training period.
 #' @details For each forecast date (all dates except for the first
 #' \code{train} dates), the optimal combination of SLP weight and scale
@@ -27,94 +27,93 @@
 #' \strong{7},  1747--1782.
 #'
 #' @author J. Gross, A. Moeller.
+#' @examples
+#' combineSLP(16.1, list(mean = 15, sd = 0.8), list(mean = 18, sd = 1), 0)
 #'
 #'
 combineSLP <- function(x, pred_one = list(mean = NULL, sd = NULL),
                        pred_two = pred_one, train = 90,
                        weight_grid = seq(0, 1, 0.1),
                        scale_grid = seq(0.6, 1.4, 0.1)) {
-    if (!(length(x) > train)) stop("too less observations")
+    n <- length(x)
+    m <- train
+    if (n <= m) stop("too less observations")
+    if (!.is_weight(weight_grid)) stop("weight grid not between 0 and 1")
+    if (any(scale_grid < 0)) stop("scale grid not positive")
+    # input moments
     mu1 <- pred_one$mean
     sd1 <- pred_one$sd
     mu2 <- pred_two$mean
     sd2 <- pred_two$sd
-    train_length <- train
+    # weight-scale grid
     wt_grid <- weight_grid
     ct_grid <- scale_grid
     allgrid <- expand.grid(weight = wt_grid, scale = ct_grid)
+    # verification period
+    v_period <- (m + 1):n
 
-    verification_period <- (train_length + 1):length(mu1)
-
-    roll_combine <- function(verification_day) {
-        train_period <- (verification_day - (train_length:1))
-
+    roll_combine <- function(v_day) {
+      # av. crps for each (two-dimensional) grid point
+        train_period <- v_day - (m:1)
         crps_combine <- function(allgrid_row) {
-            r_w1 <- allgrid_row[1]
-            r_w2 <- 1 - r_w1
-            r_ct <- allgrid_row[2]
-
-            r_obs <- x[train_period]
-            r_mu1 <- mu1[train_period]
-            r_sd1 <- sd1[train_period] * r_ct
-            r_mu2 <- mu2[train_period]
-            r_sd2 <- sd2[train_period] * r_ct
-
-            crps_out <- crps_norm(x = r_obs, mu1 = r_mu1,
-                                  sd1 = r_sd1, mu2 = r_mu2,
-                                  sd2 = r_sd2, w1 = r_w1)
-
+            crps_out <- crps_norm(x = x[train_period],
+                                  mu1 = mu1[train_period],
+                                  sd1 = (sd1[train_period] * allgrid_row[2]),
+                                  mu2 = mu2[train_period],
+                                  sd2 = (sd2[train_period] * allgrid_row[2]),
+                                  w1 = allgrid_row[1])
             crps.comb <- mean(crps_out)
             return(crps.comb)
         }
         crps_allgrid <- apply(allgrid, 1, crps_combine)
         allgrid_crps <- cbind(allgrid, crps = crps_allgrid)
-        # --
+        # mimimum av. crps
         grid_out <- allgrid_crps[which.min(allgrid_crps$crps), ]
         grid_out <- unlist(grid_out)
         grid_out
     }
-    weights_out <- vapply(verification_period, roll_combine, numeric(3))
+    weights_out <- vapply(v_period, roll_combine, numeric(3))
     weights_out <- (as.data.frame(t(weights_out)))[, 1:2]
-    comb_out <- cbind(obs = x[verification_period],
-                      mu1 = mu1[verification_period],
-        sd1 = sd1[verification_period],
-        mu2 = mu2[verification_period],
-        sd2 = sd2[verification_period],
-        weights_out)
+    # weights and scale for verification period
+    comb_out <- cbind(obs = x[v_period], mu1 = mu1[v_period],
+                      sd1 = sd1[v_period], mu2 = mu2[v_period],
+                      sd2 = sd2[v_period], weights_out)
     comb_out
 }
-#' Predictive Moments of the SLP of two Normals
+#' Moments of the SLP of two Normals
 #' @export
-#' @description Computes the predictive mean and predictive standard
-#' deviation of the SLP of two normals.
-#' @param pred_one A list with two vectors \code{mean} and \code{sd} of
+#' @description Computes the mean and standard
+#' deviation of the SLP (spread-adjust linear pool) of two normals.
+#' @param normal_one A list with two vectors \code{mean} and \code{sd} of
 #' the same length as \code{x} respectively, providing parameters of the
-#' normal predictive distribution.
-#' @param pred_two A list with two vectors \code{mean} and \code{sd}
+#' normal distribution.
+#' @param normal_two A list with two vectors \code{mean} and \code{sd}
 #' of the same length as \code{x} respectively, providing parameters of the second
-#' normal predictive distribution.
-#' @param weight_one A vector of weights corresponding to \code{pred_one}.
+#' normal distribution.
+#' @param weight_one A vector of weights corresponding to \code{normal_one}.
 #' @param scale A vector of scale values.
-#' @return A list with two elements \code{mu} (predictive mean) and
-#' \code{sd} (predictive standard deviation) of the SLP combination.
+#' @return A list with two elements \code{mean} and
+#' \code{sd} of the SLP combination.
 #' @examples
-#' slp_moments(pred_one = list(mean = 15, sd = 0.8), pred_two = list(mean = 18, sd = 1))
+#' slp_moments(list(mean = 15, sd = 0.8), list(mean = 18, sd = 1), 0.7, 1.2)
 #' @author J. Gross, A. Moeller.
 #'
-slp_moments <- function(pred_one = list(mean = NULL, sd = NULL),
-                        pred_two = pred_one,
-                        weight_one = rep(0.5, length(pred_one$mean)),
-                        scale = rep(1, length(pred_one$sd))) {
-    w1 <- weight_one
-    w2 <- 1 - weight_one
-    s <- scale
-    mu1 <- pred_one$mean
-    sd1 <- pred_one$sd * s
-    mu2 <- pred_two$mean
-    sd2 <- pred_two$sd * s
-    mu_slp <- w1 * mu1 + w2 * mu2
-    var_slp <- w1 * (mu1^2 + sd1^2) + w2 * (mu2^2 + sd2^2) - mu_slp^2
-    out <- list(mu = mu_slp, sd = sqrt(var_slp))
-    out
+slp_moments <- function(normal_one = list(mean = NULL, sd = NULL),
+                        normal_two = normal_one,
+                        weight_one = rep(0.5, length(normal_one$mean)),
+                        scale = rep(1, length(normal_one$sd))) {
+  w1 <- weight_one
+  if (any((w1 < 0) | (w1 > 1))) stop("weights must lie between 0 and 1")
+  w2 <- 1 - weight_one
+  s <- scale
+  if (any(s < 0)) stop("scale must be positive")
+  mu1 <- normal_one$mean
+  sd1 <- (normal_one$sd * s)
+  mu2 <- normal_two$mean
+  sd2 <- (normal_two$sd * s)
+  mu_slp <- w1 * mu1 + w2 * mu2
+  sd_slp <- sqrt(w1 * (mu1^2 + sd1^2) + w2 * (mu2^2 + sd2^2) - mu_slp^2)
+  out <- list(mean = mu_slp, sd = sd_slp)
+  out
 }
 # --

@@ -107,22 +107,4 @@ var_ar <- function(ar = numeric(), i_var = 1) {
         var_out <- i_var/sum(ARMAacf(ar = ar) * c(1, -ar))
     var_out
 }
-#' Convex Combination
-#' @export
-#' @description Computes a convex combination of two vector of the same length
-#' @param x A vector.
-#' @param y A vector of the same length as x.
-#' @param w A weight vector of the same length as x.
-#' @return A vector of the same length as x and y.
-#'
-#' @author J. Gross, A. Moeller.
-#'
-cx_comb <- function(x, y, w){
-  if ((length(x) != length(y)) |
-      (length(x) != length(w)) |
-      (length(y) != length(w))) stop("input vectors must have same length")
-  if (any((w < 0) | (w > 1))) stop("weights are not between 0 and 1")
-  w * x + (1 - w) * y
-}
-
 

@@ -2,35 +2,35 @@
 % Please edit documentation in R/ens_slp_functions.R
 \name{slp_moments}
 \alias{slp_moments}
-\title{Predictive Moments of the SLP of two Normals}
+\title{Moments of the SLP of two Normals}
 \usage{
-slp_moments(pred_one = list(mean = NULL, sd = NULL), pred_two = pred_one,
-  weight_one = rep(0.5, length(pred_one$mean)), scale = rep(1,
-  length(pred_one$sd)))
+slp_moments(normal_one = list(mean = NULL, sd = NULL),
+  normal_two = normal_one, weight_one = rep(0.5, length(normal_one$mean)),
+  scale = rep(1, length(normal_one$sd)))
 }
 \arguments{
-\item{pred_one}{A list with two vectors \code{mean} and \code{sd} of
+\item{normal_one}{A list with two vectors \code{mean} and \code{sd} of
 the same length as \code{x} respectively, providing parameters of the
-normal predictive distribution.}
+normal distribution.}
 
-\item{pred_two}{A list with two vectors \code{mean} and \code{sd}
+\item{normal_two}{A list with two vectors \code{mean} and \code{sd}
 of the same length as \code{x} respectively, providing parameters of the second
-normal predictive distribution.}
+normal distribution.}
 
-\item{weight_one}{A vector of weights corresponding to \code{pred_one}.}
+\item{weight_one}{A vector of weights corresponding to \code{normal_one}.}
 
 \item{scale}{A vector of scale values.}
 }
 \value{
-A list with two elements \code{mu} (predictive mean) and
-\code{sd} (predictive standard deviation) of the SLP combination.
+A list with two elements \code{mean} and
+\code{sd} of the SLP combination.
 }
 \description{
-Computes the predictive mean and predictive standard
-deviation of the SLP of two normals.
+Computes the mean and standard
+deviation of the SLP (spread-adjust linear pool) of two normals.
 }
 \examples{
-slp_moments(pred_one = list(mean = 15, sd = 0.8), pred_two = list(mean = 18, sd = 1))
+slp_moments(list(mean = 15, sd = 0.8), list(mean = 18, sd = 1), 0.7, 1.2)
 }
 \author{
 J. Gross, A. Moeller.

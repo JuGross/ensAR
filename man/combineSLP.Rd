@@ -23,7 +23,7 @@ normal predictive distribution.}
 
 \item{weight_grid}{The possible values of the SLP weight.}
 
-\item{scale_grid}{The possible vlaues of the SLP scale parameter.}
+\item{scale_grid}{The possible values of the SLP scale parameter.}
 }
 \value{
 A data frame with the observation, predictive mean and
@@ -42,6 +42,11 @@ parameters is found on a grid determined by \code{weight_grid} and
 (predictive distribution, observation)-pair minimizes the average
 CRPS with respect to the rolling training period of
 length \code{train}.
+}
+\examples{
+combineSLP(16.1, list(mean = 15, sd = 0.8), list(mean = 18, sd = 1), 0)
+
+
 }
 \author{
 J. Gross, A. Moeller.
