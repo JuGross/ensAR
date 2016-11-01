@@ -3,10 +3,10 @@
 #' @description Computes the weight and scale parameters of the
 #' SLP of two normals from a rolling training period.
 #' @param x A vector of observations of a weather quantity.
-#' @param pred_one A list with two vectors \code{mean} and \code{sd} of
+#' @param par_one A list with two vectors \code{mean} and \code{sd} of
 #' the same length as \code{x} respectively, providing parameters of the
 #' normal predictive distribution.
-#' @param pred_two A list with two vectors \code{mean} and \code{sd}
+#' @param par_two A list with two vectors \code{mean} and \code{sd}
 #' of the same length as \code{x} respectively, providing parameters of the second
 #' normal predictive distribution.
 #' @param weight_grid The possible values of the SLP weight.
@@ -31,8 +31,8 @@
 #' combineSLP(16.1, list(mean = 15, sd = 0.8), list(mean = 18, sd = 1), 0)
 #'
 #'
-combineSLP <- function(x, pred_one = list(mean = NULL, sd = NULL),
-                       pred_two = pred_one, train = 90,
+combineSLP <- function(x, par_one = list(mean = NULL, sd = NULL),
+                       par_two = par_one, train = 90,
                        weight_grid = seq(0, 1, 0.1),
                        scale_grid = seq(0.6, 1.4, 0.1)) {
     n <- length(x)
@@ -41,10 +41,10 @@ combineSLP <- function(x, pred_one = list(mean = NULL, sd = NULL),
     if (!.is_weight(weight_grid)) stop("weight grid not between 0 and 1")
     if (any(scale_grid < 0)) stop("scale grid not positive")
     # input moments
-    mu1 <- pred_one$mean
-    sd1 <- pred_one$sd
-    mu2 <- pred_two$mean
-    sd2 <- pred_two$sd
+    mu1 <- par_one$mean
+    sd1 <- par_one$sd
+    mu2 <- par_two$mean
+    sd2 <- par_two$sd
     # weight-scale grid
     wt_grid <- weight_grid
     ct_grid <- scale_grid
@@ -84,13 +84,13 @@ combineSLP <- function(x, pred_one = list(mean = NULL, sd = NULL),
 #' @export
 #' @description Computes the mean and standard
 #' deviation of the SLP (spread-adjust linear pool) of two normals.
-#' @param normal_one A list with two vectors \code{mean} and \code{sd} of
+#' @param par_one A list with two vectors \code{mean} and \code{sd} of
 #' the same length as \code{x} respectively, providing parameters of the
 #' normal distribution.
-#' @param normal_two A list with two vectors \code{mean} and \code{sd}
+#' @param par_two A list with two vectors \code{mean} and \code{sd}
 #' of the same length as \code{x} respectively, providing parameters of the second
 #' normal distribution.
-#' @param weight_one A vector of weights corresponding to \code{normal_one}.
+#' @param weight_one A vector of weights corresponding to \code{par_one}.
 #' @param scale A vector of scale values.
 #' @return A list with two elements \code{mean} and
 #' \code{sd} of the SLP combination.
@@ -98,19 +98,19 @@ combineSLP <- function(x, pred_one = list(mean = NULL, sd = NULL),
 #' slp_moments(list(mean = 15, sd = 0.8), list(mean = 18, sd = 1), 0.7, 1.2)
 #' @author J. Gross, A. Moeller.
 #'
-slp_moments <- function(normal_one = list(mean = NULL, sd = NULL),
-                        normal_two = normal_one,
-                        weight_one = rep(0.5, length(normal_one$mean)),
-                        scale = rep(1, length(normal_one$sd))) {
+slp_moments <- function(par_one = list(mean = NULL, sd = NULL),
+                        par_two = par_one,
+                        weight_one = rep(0.5, length(par_one$mean)),
+                        scale = rep(1, length(par_one$sd))) {
   w1 <- weight_one
   if (any((w1 < 0) | (w1 > 1))) stop("weights must lie between 0 and 1")
   w2 <- 1 - weight_one
   s <- scale
   if (any(s < 0)) stop("scale must be positive")
-  mu1 <- normal_one$mean
-  sd1 <- (normal_one$sd * s)
-  mu2 <- normal_two$mean
-  sd2 <- (normal_two$sd * s)
+  mu1 <- par_one$mean
+  sd1 <- (par_one$sd * s)
+  mu2 <- par_two$mean
+  sd2 <- (par_two$sd * s)
   mu_slp <- w1 * mu1 + w2 * mu2
   sd_slp <- sqrt(w1 * (mu1^2 + sd1^2) + w2 * (mu2^2 + sd2^2) - mu_slp^2)
   out <- list(mean = mu_slp, sd = sd_slp)

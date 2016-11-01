@@ -22,7 +22,7 @@ Computes a synopsis for an object of
 class 'veri_stats'.
 }
 \examples{
-x <- veri_stats(17.5, pred_one = list(mean = 15,sd = 1.5))
+x <- veri_stats(17.5, par_one = list(mean = 15,sd = 1.5))
 veri_synop(x, method = "No method", digits = 3)
 #' @author J. Gross, A. Moeller.
 }

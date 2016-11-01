@@ -4,20 +4,20 @@
 \alias{slp_moments}
 \title{Moments of the SLP of two Normals}
 \usage{
-slp_moments(normal_one = list(mean = NULL, sd = NULL),
-  normal_two = normal_one, weight_one = rep(0.5, length(normal_one$mean)),
-  scale = rep(1, length(normal_one$sd)))
+slp_moments(par_one = list(mean = NULL, sd = NULL), par_two = par_one,
+  weight_one = rep(0.5, length(par_one$mean)), scale = rep(1,
+  length(par_one$sd)))
 }
 \arguments{
-\item{normal_one}{A list with two vectors \code{mean} and \code{sd} of
+\item{par_one}{A list with two vectors \code{mean} and \code{sd} of
 the same length as \code{x} respectively, providing parameters of the
 normal distribution.}
 
-\item{normal_two}{A list with two vectors \code{mean} and \code{sd}
+\item{par_two}{A list with two vectors \code{mean} and \code{sd}
 of the same length as \code{x} respectively, providing parameters of the second
 normal distribution.}
 
-\item{weight_one}{A vector of weights corresponding to \code{normal_one}.}
+\item{weight_one}{A vector of weights corresponding to \code{par_one}.}
 
 \item{scale}{A vector of scale values.}
 }

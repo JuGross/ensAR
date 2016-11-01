@@ -4,6 +4,8 @@ Title: Autoregressive postprocessing methods for ensemble forecasts
 Version: 0.0.0.9000
 Authors@R: c(person("Juergen", "Gross", email = "juergen.gross@tu-dortmund.de", role = c("aut", "cre")),
   person("Annette", "Moeller", email = "standardabweichung@yahoo.de", role = c("aut")))
+URL: http://github.com/JuGross/ensAR
+BugReports: http://github.com/JuGross/ensAR/issues
 Description: Establishes functions for applying autoregressive
   postprocessing methods to forecast ensembles.
 Imports:

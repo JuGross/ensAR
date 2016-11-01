@@ -4,18 +4,18 @@
 \alias{combineSLP}
 \title{Spread-Adjusted Linear Pool (SLP) of two Normals}
 \usage{
-combineSLP(x, pred_one = list(mean = NULL, sd = NULL), pred_two = pred_one,
+combineSLP(x, par_one = list(mean = NULL, sd = NULL), par_two = par_one,
   train = 90, weight_grid = seq(0, 1, 0.1), scale_grid = seq(0.6, 1.4,
   0.1))
 }
 \arguments{
 \item{x}{A vector of observations of a weather quantity.}
 
-\item{pred_one}{A list with two vectors \code{mean} and \code{sd} of
+\item{par_one}{A list with two vectors \code{mean} and \code{sd} of
 the same length as \code{x} respectively, providing parameters of the
 normal predictive distribution.}
 
-\item{pred_two}{A list with two vectors \code{mean} and \code{sd}
+\item{par_two}{A list with two vectors \code{mean} and \code{sd}
 of the same length as \code{x} respectively, providing parameters of the second
 normal predictive distribution.}
 

@@ -46,10 +46,10 @@ crps_norm <- function(x, mu1, sd1, mu2 = mu1, sd2 = sd1, w1 = 1) {
 #' one predictive normal distribution, or for the spread-adjusted
 #' linear pool (SLP) of two predictive normal distributions.
 #' @param x A vector of observations of a weather quantity.
-#' @param pred_one A list with two vectors \code{mean} and \code{sd} of
+#' @param par_one A list with two vectors \code{mean} and \code{sd} of
 #' the same length as \code{x} respectively, providing parameters of the
 #' normal predictive distribution.
-#' @param pred_two A list with two vectors \code{mean} and \code{sd}
+#' @param par_two A list with two vectors \code{mean} and \code{sd}
 #' of the same length as \code{x} respectively, providing parameters of the second
 #' normal predictive distribution. Only required if \code{weight_one}
 #' is not \code{NULL} in which case the two parameter vectors must
@@ -60,11 +60,11 @@ crps_norm <- function(x, mu1, sd1, mu2 = mu1, sd2 = sd1, w1 = 1) {
 #' parameter used for the spread-adjusted linear pool.
 #' @details If \code{weight_one} is \code{NULL} verification statistics
 #' are computed for a normal distribution with parameters provided by
-#' \code{pred_one}. Otherwise the predictive distribution is the
+#' \code{par_one}. Otherwise the predictive distribution is the
 #' spread-adjusted linear pool (SLP) of two normals with parameters
-#' provided by \code{pred_one} and \code{pred_two} and
+#' provided by \code{par_one} and \code{par_two} and
 #' SLP parameters \code{weight_one} (weights
-#' corresponding to \code{pred_one}) and common scale
+#' corresponding to \code{par_one}) and common scale
 #' parameter \code{scale}.
 #' @return A list with elements
 #' \describe{
@@ -78,14 +78,14 @@ crps_norm <- function(x, mu1, sd1, mu2 = mu1, sd2 = sd1, w1 = 1) {
 #' \item{\code{rmv}}{The square root of the mean of the predictive variance.}
 #' }
 #' @examples
-#' veri_stats(17.5, pred_one = list(mean = 15, sd = 1))
+#' veri_stats(17.5, par_one = list(mean = 15, sd = 1))
 #' @author J. Gross, A. Moeller.
-veri_stats <- function(x, pred_one = list(mean = NULL, sd = NULL),
-                       pred_two = pred_one, weight_one = NULL,
+veri_stats <- function(x, par_one = list(mean = NULL, sd = NULL),
+                       par_two = par_one, weight_one = NULL,
                        scale = NULL) {
     if (is.null(weight_one)) {
-        mu <- pred_one$mean
-        sd <- pred_one$sd
+        mu <- par_one$mean
+        sd <- par_one$sd
         pit <- pnorm(x, mu, sd)
         z <- (x - mu)/sd
         dss <- z^2 + 2 * log(sd)
@@ -100,10 +100,10 @@ veri_stats <- function(x, pred_one = list(mean = NULL, sd = NULL),
         } else {
             s <- scale
         }
-        mu1 <- pred_one$mean
-        sd1 <- pred_one$sd * s
-        mu2 <- pred_two$mean
-        sd2 <- pred_two$sd * s
+        mu1 <- par_one$mean
+        sd1 <- par_one$sd * s
+        mu2 <- par_two$mean
+        sd2 <- par_two$sd * s
         pit <- w1 * pnorm(x, mu1, sd1) + w2 * pnorm(x, mu2, sd2)
         mu_comb <- w1 * mu1 + w2 * mu2
         var_comb <- w1 * (mu1^2 + sd1^2) + w2 * (mu2^2 + sd2^2) - mu_comb^2
@@ -129,7 +129,7 @@ veri_stats <- function(x, pred_one = list(mean = NULL, sd = NULL),
 #' set to \code{NULL}, the values are not rounded.
 #' @return A data frame with one row and corresponding row name given by \code{method_name}.
 #' @examples
-#' x <- veri_stats(17.5, pred_one = list(mean = 15,sd = 1.5))
+#' x <- veri_stats(17.5, par_one = list(mean = 15,sd = 1.5))
 #' veri_synop(x, method = "No method", digits = 3)
 #' #' @author J. Gross, A. Moeller.
 veri_synop <- function(x, method_name = NULL, digits = 4) {

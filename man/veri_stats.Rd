@@ -4,17 +4,17 @@
 \alias{veri_stats}
 \title{Verification Statistics}
 \usage{
-veri_stats(x, pred_one = list(mean = NULL, sd = NULL), pred_two = pred_one,
+veri_stats(x, par_one = list(mean = NULL, sd = NULL), par_two = par_one,
   weight_one = NULL, scale = NULL)
 }
 \arguments{
 \item{x}{A vector of observations of a weather quantity.}
 
-\item{pred_one}{A list with two vectors \code{mean} and \code{sd} of
+\item{par_one}{A list with two vectors \code{mean} and \code{sd} of
 the same length as \code{x} respectively, providing parameters of the
 normal predictive distribution.}
 
-\item{pred_two}{A list with two vectors \code{mean} and \code{sd}
+\item{par_two}{A list with two vectors \code{mean} and \code{sd}
 of the same length as \code{x} respectively, providing parameters of the second
 normal predictive distribution. Only required if \code{weight_one}
 is not \code{NULL} in which case the two parameter vectors must
@@ -47,15 +47,15 @@ linear pool (SLP) of two predictive normal distributions.
 \details{
 If \code{weight_one} is \code{NULL} verification statistics
 are computed for a normal distribution with parameters provided by
-\code{pred_one}. Otherwise the predictive distribution is the
+\code{par_one}. Otherwise the predictive distribution is the
 spread-adjusted linear pool (SLP) of two normals with parameters
-provided by \code{pred_one} and \code{pred_two} and
+provided by \code{par_one} and \code{par_two} and
 SLP parameters \code{weight_one} (weights
-corresponding to \code{pred_one}) and common scale
+corresponding to \code{par_one}) and common scale
 parameter \code{scale}.
 }
 \examples{
-veri_stats(17.5, pred_one = list(mean = 15, sd = 1))
+veri_stats(17.5, par_one = list(mean = 15, sd = 1))
 }
 \author{
 J. Gross, A. Moeller.
