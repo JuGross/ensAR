@@ -59,9 +59,7 @@ rank_ensemble <- function(ens, obs_col, mem_col) {
 #' is the forecast error.
 #'
 #' @author J. Gross, A. Moeller.
-#' @examples
-#' #
-#' ar_ensemble(Magdeburg[1:(90+1),], obs_col = 6, mem_col = 7:56)
+#'
 ar_ensemble <- function(ens, obs_col, mem_col, train = 90) {
   if (!is.data.frame(ens)) stop("ensemble input must be a data frame")
   if (any(!complete.cases(ens[, c(obs_col, mem_col)]))){
@@ -117,7 +115,7 @@ ar_ensemble <- function(ens, obs_col, mem_col, train = 90) {
 #' the AR modified ensemble members (data frame \code{forecast} from \code{ar_ens}).
 #' The predictive standard deviation \code{sd} is the weighted mean of two
 #' standard deviations. The first one is the square root of the mean
-#' of AR variances (data frame \code{variance} from \code{ar.ens}). The second one
+#' of AR variances (data frame \code{variance} from \code{ar_ens}). The second one
 #' is the sample standard deviation (with denominator \eqn{n}, not \eqn{n-1})
 #' of the AR modified ensemble members.
 #' The weights are chosen in order to minimize the average CRPS computed from a rolling
@@ -127,6 +125,7 @@ ar_ensemble <- function(ens, obs_col, mem_col, train = 90) {
 #' @return A data frame containing the predictive expectation \code{mu} and
 #' the predictive standard deviation \code{sd}.
 #' @author J. Gross, A. Moeller.
+#'
 ar_preddistr <- function(ar_ens, train = 30) {
   if(!(class(ar_ens) == "ar_ens"))
     stop("input must be of class 'ar_ens'")
@@ -183,8 +182,8 @@ ar_preddistr <- function(ar_ens, train = 30) {
 #' @param train_crps The length of the additional training period used
 #' for computing the predictive standard deviation.
 #' @return A data frame.
-#'
 #' @author J. Gross, A. Moeller.
+#'
 ensembleAR <- function(ens, obs_col, mem_col, train_ar = 90, train_crps = 30) {
     out1 <- ar_ensemble(ens = ens, obs_col = obs_col, mem_col = mem_col,
                         train = train_ar)

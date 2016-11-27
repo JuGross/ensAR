@@ -1,0 +1,52 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+
+### Overview
+
+
+The **ensAR** package establishes functions for statistical postprocessing of ensemble forecasts for a Gaussian distributed weather quantity. Predictive mean and standard deviation are derived by an autoregressive time series modification of the ensemble members. 
+
+It is assumed that the required data frame consists of one-step ahead forecasts matched with the corresponding observation of the weather quantity in the sense that
+for each row the difference between forecast and observation is the forecast error.
+The package contains data frames **Magdeburg** and **ListSylt** comprising daily temperature observations at German stations Magdeburg and List auf Sylt matched with 24-h forecasts generated for the respective observation day.
+
+
+## Installation
+
+The latest version can be installed from
+[Github](https://github.com/JuGross/ensAR)
+
+```r
+# install.packages("devtools")
+library(devtools)
+install_github("JuGross/ensAR") 
+```
+
+### Example
+
+
+```r
+# Predictive distribution for one forecast day at station Magdeburg
+# using the default number (90 + 30) of training days.
+library(ensAR)
+ensembleAR(Magdeburg[1:(90+30+1), ], obs_col = 6, mem_col = 7:56)
+```
+
+
+
+### License
+
+The **ensAR** package is licensed under the GPL-2 (http://www.gnu.org/licenses/gpl.html).
+

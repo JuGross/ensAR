@@ -25,7 +25,7 @@ The predictive mean \code{mu} is the usual mean of
 the AR modified ensemble members (data frame \code{forecast} from \code{ar_ens}).
 The predictive standard deviation \code{sd} is the weighted mean of two
 standard deviations. The first one is the square root of the mean
-of AR variances (data frame \code{variance} from \code{ar.ens}). The second one
+of AR variances (data frame \code{variance} from \code{ar_ens}). The second one
 is the sample standard deviation (with denominator \eqn{n}, not \eqn{n-1})
 of the AR modified ensemble members.
 The weights are chosen in order to minimize the average CRPS computed from a rolling
