@@ -27,6 +27,10 @@ A data frame.
 A wrapper for sequential processing of the functions
 \code{\link{ar_ensemble}} and \code{\link{ar_preddistr}}.
 }
+\examples{
+ensembleAR(Magdeburg[1:(90 + 30 + 1),], obs_col = 6, mem_col = 7:56)
+
+}
 \author{
 J. Gross, A. Moeller.
 }

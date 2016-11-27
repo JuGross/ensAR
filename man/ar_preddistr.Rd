@@ -12,8 +12,13 @@ ar_preddistr(ar_ens, train = 30)
 \item{train}{The length of the training period.}
 }
 \value{
-A data frame containing the predictive expectation \code{mu} and
-the predictive standard deviation \code{sd}.
+A data frame containing
+\itemize{
+\item{\code{obs}:}{ the observation}
+\item{\code{mu}:}{ predictive mean}
+\item{\code{sd}:}{ predictive standard deviation}
+\item{\code{w}:}{ the weight corresponding to the first employed standard deviation}}
+and additional columns.
 }
 \description{
 Computes the predictive mean and predictive standard
@@ -30,6 +35,10 @@ is the sample standard deviation (with denominator \eqn{n}, not \eqn{n-1})
 of the AR modified ensemble members.
 The weights are chosen in order to minimize the average CRPS computed from a rolling
 training period of length \code{train} and assuming a predictive Gaussian distribution.
+}
+\examples{
+mod <- ar_ensemble(Magdeburg[1:(90 + 30 + 1),], obs_col = 6, mem_col = 7:56)
+ar_preddistr(mod) # data frame of one row
 }
 \author{
 J. Gross, A. Moeller.
