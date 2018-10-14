@@ -14,10 +14,9 @@
 \description{
 Print method for objects of class 'na_gaps'.
 }
-\author{
-J. Gross, A. Moeller.
-}
 \seealso{
 \code{\link{na_gaps}}
 }
-
+\author{
+J. Gross, A. Moeller.
+}

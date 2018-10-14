@@ -43,4 +43,3 @@ ar_preddistr(mod) # data frame of one row
 \author{
 J. Gross, A. Moeller.
 }
-

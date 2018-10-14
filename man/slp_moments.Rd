@@ -35,4 +35,3 @@ slp_moments(list(mean = 15, sd = 0.8), list(mean = 18, sd = 1), 0.7, 1.2)
 \author{
 J. Gross, A. Moeller.
 }
-

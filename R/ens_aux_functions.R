@@ -5,11 +5,14 @@
 #'
 #' @author J. Gross, A. Moeller.
 #' @examples
-#' is_weight(c(0.3,0.4,0.9))
+#' \dontrun{
+#' a <- c(0.3, 0.4, 0.9)
+#' .is_weight(a)
+#' }
 #'
-.is_weight <- function(x){
-  out <- !any((x < 0) | (x > 1))
-  out
+.is_weight <- function(x) {
+    out <- !any((x < 0) | (x > 1))
+    out
 }
 #'
 #' Convex Combination
@@ -20,15 +23,18 @@
 #' @return A vector of the same length as x and y.
 #'
 #' @author J. Gross, A. Moeller.
-#' #' @examples
+#' @examples \dontrun{
 #' x <- c(1, 2, 3)
 #' y <- c(3, 2, 1)
 #' w <- c(1/2, 1/3, 1/2)
-#' cx_comb(x, y, w)
+#' .cx_comb(x, y, w)
+#' }
 #'
-.cx_comb <- function(x, y, w){
-  if (!((length(x) == length(y)) & (length(y) == length(w)))) stop("input vectors must have same length")
-  if (!.is_weight(w)) stop("weights are not between 0 and 1")
-  w * x + (1 - w) * y
+.cx_comb <- function(x, y, w) {
+    if (!((length(x) == length(y)) & (length(y) == length(w)))) 
+        stop("input vectors must have same length")
+    if (!.is_weight(w)) 
+        stop("weights are not between 0 and 1")
+    w * x + (1 - w) * y
 }
 

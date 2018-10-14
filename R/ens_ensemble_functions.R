@@ -63,49 +63,51 @@ rank_ensemble <- function(ens, obs_col, mem_col) {
 #' ar_ensemble(Magdeburg[1:(90 + 1),], obs_col = 6, mem_col = 7:56)
 #'
 ar_ensemble <- function(ens, obs_col, mem_col, train = 90) {
-  if (!is.data.frame(ens)) stop("ensemble input must be a data frame")
-  if (any(!complete.cases(ens[, c(obs_col, mem_col)]))){
-    warning("occurring NA's were replaced by spline interpolation")
-    ens_approx <- apply(ens[, c(obs_col, mem_col)], 2,
-                        zoo::na.spline, na.rm = FALSE)
-    ens[, obs_col] <- ens_approx[,1]
-    ens[, mem_col] <- ens_approx[,-1]
-  }
-  train_length <- train
-  forecast_period <- (train_length + 1):nrow(ens)
-  y <- ens[, obs_col]  # observation for whole period
-  #--
-  ar_member <- function(member) {
-    # to be applied to ensemble members
-    ar_modify <- function(forecast_day) {
-      # to be applied to forecast period
-      train_period <- (forecast_day - (train_length:1))
-      z <- (y - member)[train_period]  # forecast error series
-      z_mod <- ar(x = z, aic = TRUE, order.max = NULL)
-      p <- z_mod$order
-      mu <- z_mod$x.mean
-      a <- z_mod$ar
-      # one-step ahead prediction of obs for time k = forecast_day based on
-      # times k-1, ..., k-p:
-      out_forecast_day <- member[forecast_day] + mu +
-        sum(a * (z[(train_length - (1:p))] - mu))
-      # estimated variance of z from model fit:
-      out_var_day <- var_ar(ar = a, i_var = z_mod$var.pred)
-      return(c(forecast = out_forecast_day, variance = out_var_day))
+    if (!is.data.frame(ens)) 
+        stop("ensemble input must be a data frame")
+    if (any(!complete.cases(ens[, c(obs_col, mem_col)]))) {
+        warning("occurring NA's were replaced by spline interpolation")
+        ens_approx <- apply(ens[, c(obs_col, mem_col)], 2, zoo::na.spline, 
+            na.rm = FALSE)
+        ens[, obs_col] <- ens_approx[, 1]
+        ens[, mem_col] <- ens_approx[, -1]
     }
-    out <- vapply(forecast_period, ar_modify, numeric(2))
-    return(list(forecast = out[1, ], variance = out[2, ]))
-  }
-  ret_ens <- apply(ens[, mem_col, drop = FALSE], 2, ar_member)
-  # -
-  ens_forecast <- as.data.frame(lapply(ret_ens, function(x) x[[1]]))
-  ens_var <- as.data.frame(lapply(ret_ens, function(x) x[[2]]))
-  #
-  out <- list(observation = ens[forecast_period, obs_col], forecast = ens_forecast,
-       variance = ens_var, additional = ens[forecast_period, -c(obs_col, mem_col)])
-  class(out) <- "ar_ens"
-  out
-
+    train_length <- train
+    forecast_period <- (train_length + 1):nrow(ens)
+    y <- ens[, obs_col]  # observation for whole period
+    #--
+    ar_member <- function(member) {
+        # to be applied to ensemble members
+        ar_modify <- function(forecast_day) {
+            # to be applied to forecast period
+            train_period <- (forecast_day - (train_length:1))
+            z <- (y - member)[train_period]  # forecast error series
+            z_mod <- ar(x = z, aic = TRUE, order.max = NULL)
+            p <- z_mod$order
+            mu <- z_mod$x.mean
+            a <- z_mod$ar
+            # one-step ahead prediction of obs for time k = forecast_day
+            # based on times k-1, ..., k-p:
+            out_forecast_day <- member[forecast_day] + mu + sum(a * 
+                (z[(train_length - (1:p))] - mu))
+            # estimated variance of z from model fit:
+            out_var_day <- var_ar(ar = a, i_var = z_mod$var.pred)
+            return(c(forecast = out_forecast_day, variance = out_var_day))
+        }
+        out <- vapply(forecast_period, ar_modify, numeric(2))
+        return(list(forecast = out[1, ], variance = out[2, ]))
+    }
+    ret_ens <- apply(ens[, mem_col, drop = FALSE], 2, ar_member)
+    # -
+    ens_forecast <- as.data.frame(lapply(ret_ens, function(x) x[[1]]))
+    ens_var <- as.data.frame(lapply(ret_ens, function(x) x[[2]]))
+    # 
+    out <- list(observation = ens[forecast_period, obs_col], forecast = ens_forecast, 
+        variance = ens_var, additional = ens[forecast_period, 
+            -c(obs_col, mem_col)])
+    class(out) <- "ar_ens"
+    out
+    
 }
 #' Predictive Moments from an AR Ensemble
 #' @export
@@ -136,47 +138,50 @@ ar_ensemble <- function(ens, obs_col, mem_col, train = 90) {
 #' mod <- ar_ensemble(Magdeburg[1:(90 + 30 + 1),], obs_col = 6, mem_col = 7:56)
 #' ar_preddistr(mod) # data frame of one row
 ar_preddistr <- function(ar_ens, train = 30) {
-  if(!(class(ar_ens) == "ar_ens"))
-    stop("input must be of class 'ar_ens'")
-  y <- ar_ens$observation
-  n <- length(y)
-  m <- train
-  if(n <= m) stop("too less observations")
-  sample_sd <- function(x) sqrt(mean(scale(x, scale = FALSE)^2))
-  # length n objects
-  mu_out <- apply(ar_ens$forecast, 1, mean)
-  sd_out_1 <- sqrt(apply(ar_ens$variance, 1, mean))
-  sd_out_2 <- apply(ar_ens$forecast, 1, sample_sd)
-  # length n - m objects
-  v_period <- (m + 1):n
-  w_out <- rep(1, (n - m))
-  sd_out <- sd_out_1[v_period]
-  # recomputation of w_out and sd_out in case m > 0
-  if (m > 0) {
-    roll_preddistr <- function(v_day) {
-      train_period <- (v_day - (m:1))
-      m_crps <- function(par) {
-        m_obs <- y[train_period]
-        m_mu <- mu_out[train_period]
-        m_sd <- par[1] * sd_out_1[train_period] +
-          (1 - par[1]) * sd_out_2[train_period]
-        #vals <- crps_norm(m_obs, m_mu, m_sd)
-        z <- (m_obs - m_mu)/m_sd
-        vals <- m_sd * (z * (2 * pnorm(z) - 1) +
-                                       2 * dnorm(z) - 1/sqrt(pi))
-        mean(vals)
+    if (!(class(ar_ens) == "ar_ens")) 
+        stop("input must be of class 'ar_ens'")
+    y <- ar_ens$observation
+    n <- length(y)
+    m <- train
+    if (n <= m) 
+        stop("too less observations")
+    sample_sd <- function(x) sqrt(mean(scale(x, scale = FALSE)^2))
+    # length n objects
+    mu_out <- apply(ar_ens$forecast, 1, mean)
+    sd_out_1 <- sqrt(apply(ar_ens$variance, 1, mean))
+    sd_out_2 <- apply(ar_ens$forecast, 1, sample_sd)
+    # length n - m objects
+    v_period <- (m + 1):n
+    w_out <- rep(1, (n - m))
+    sd_out <- sd_out_1[v_period]
+    # recomputation of w_out and sd_out in case m > 0
+    if (m > 0) {
+        roll_preddistr <- function(v_day) {
+            train_period <- (v_day - (m:1))
+            m_crps <- function(par) {
+                m_obs <- y[train_period]
+                m_mu <- mu_out[train_period]
+                m_sd <- par[1] * sd_out_1[train_period] + (1 - 
+                  par[1]) * sd_out_2[train_period]
+                # vals <- crps_norm(m_obs, m_mu, m_sd)
+                z <- (m_obs - m_mu)/m_sd
+                vals <- m_sd * (z * (2 * pnorm(z) - 1) + 2 * dnorm(z) - 
+                  1/sqrt(pi))
+                mean(vals)
+            }
+            res <- optim(par = c(w = 0.5), fn = m_crps, method = "L-BFGS-B", 
+                lower = 0, upper = 1)
+            res$par["w"]
         }
-      res <- optim(par = c(w = 0.5), fn = m_crps, method = "L-BFGS-B",
-                   lower = 0, upper = 1)
-      res$par["w"]
-      }
-    w_out <- vapply(v_period, roll_preddistr, numeric(1))
-    #sd_out <- w_out * (sd_out_1[v_period]) + (1 - w_out) * sd_out_2[v_period]
-    sd_out <- .cx_comb(sd_out_1[v_period], sd_out_2[v_period], w_out)
+        w_out <- vapply(v_period, roll_preddistr, numeric(1))
+        # sd_out <- w_out * (sd_out_1[v_period]) + (1 - w_out) *
+        # sd_out_2[v_period]
+        sd_out <- .cx_comb(sd_out_1[v_period], sd_out_2[v_period], 
+            w_out)
     }
-  out <- cbind(obs = y[v_period], mu = mu_out[v_period],
-               sd = sd_out, w = w_out, ar_ens$additional[v_period, ])
-  out
+    out <- cbind(obs = y[v_period], mu = mu_out[v_period], sd = sd_out, 
+        w = w_out, ar_ens$additional[v_period, ])
+    out
 }
 #' AR Ensemble and Predictive Distribution
 #' @export
@@ -196,8 +201,8 @@ ar_preddistr <- function(ar_ens, train = 30) {
 #' ensembleAR(Magdeburg[1:(90 + 30 + 1),], obs_col = 6, mem_col = 7:56)
 #'
 ensembleAR <- function(ens, obs_col, mem_col, train_ar = 90, train_crps = 30) {
-    out1 <- ar_ensemble(ens = ens, obs_col = obs_col, mem_col = mem_col,
-                        train = train_ar)
+    out1 <- ar_ensemble(ens = ens, obs_col = obs_col, mem_col = mem_col, 
+        train = train_ar)
     out2 <- ar_preddistr(out1, train = train_crps)
     out2
 }

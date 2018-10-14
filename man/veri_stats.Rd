@@ -4,8 +4,8 @@
 \alias{veri_stats}
 \title{Verification Statistics}
 \usage{
-veri_stats(x, par_one = list(mean = NULL, sd = NULL), par_two = par_one,
-  weight_one = NULL, scale = NULL)
+veri_stats(x, par_one = list(mean = NULL, sd = NULL),
+  par_two = par_one, weight_one = NULL, scale = NULL)
 }
 \arguments{
 \item{x}{A vector of observations of a weather quantity.}
@@ -60,4 +60,3 @@ veri_stats(17.5, par_one = list(mean = 15, sd = 1))
 \author{
 J. Gross, A. Moeller.
 }
-

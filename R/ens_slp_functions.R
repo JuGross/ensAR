@@ -31,15 +31,17 @@
 #' combineSLP(16.1, list(mean = 15, sd = 0.8), list(mean = 18, sd = 1), 0)
 #'
 #'
-combineSLP <- function(x, par_one = list(mean = NULL, sd = NULL),
-                       par_two = par_one, train = 90,
-                       weight_grid = seq(0, 1, 0.1),
-                       scale_grid = seq(0.6, 1.4, 0.1)) {
+combineSLP <- function(x, par_one = list(mean = NULL, sd = NULL), 
+    par_two = par_one, train = 90, weight_grid = seq(0, 1, 0.1), 
+    scale_grid = seq(0.6, 1.4, 0.1)) {
     n <- length(x)
     m <- train
-    if (n <= m) stop("too less observations")
-    if (!.is_weight(weight_grid)) stop("weight grid not between 0 and 1")
-    if (any(scale_grid < 0)) stop("scale grid not positive")
+    if (n <= m) 
+        stop("too less observations")
+    if (!.is_weight(weight_grid)) 
+        stop("weight grid not between 0 and 1")
+    if (any(scale_grid < 0)) 
+        stop("scale grid not positive")
     # input moments
     mu1 <- par_one$mean
     sd1 <- par_one$sd
@@ -51,33 +53,31 @@ combineSLP <- function(x, par_one = list(mean = NULL, sd = NULL),
     allgrid <- expand.grid(weight = wt_grid, scale = ct_grid)
     # verification period
     v_period <- (m + 1):n
-
+    
     roll_combine <- function(v_day) {
-      # av. crps for each (two-dimensional) grid point
+        # av. crps for each (two-dimensional) grid point
         train_period <- v_day - (m:1)
         crps_combine <- function(allgrid_row) {
-            crps_out <- crps_norm(x = x[train_period],
-                                  mu1 = mu1[train_period],
-                                  sd1 = (sd1[train_period] * allgrid_row[2]),
-                                  mu2 = mu2[train_period],
-                                  sd2 = (sd2[train_period] * allgrid_row[2]),
-                                  w1 = allgrid_row[1])
+            crps_out <- crps_norm(x = x[train_period], mu1 = mu1[train_period], 
+                sd1 = (sd1[train_period] * allgrid_row[2]), mu2 = mu2[train_period], 
+                sd2 = (sd2[train_period] * allgrid_row[2]), w1 = allgrid_row[1])
             crps.comb <- mean(crps_out)
             return(crps.comb)
         }
         crps_allgrid <- apply(allgrid, 1, crps_combine)
         allgrid_crps <- cbind(allgrid, crps = crps_allgrid)
         # mimimum av. crps
-        grid_out <- allgrid_crps[which.min(allgrid_crps$crps), ]
+        grid_out <- allgrid_crps[which.min(allgrid_crps$crps), 
+            ]
         grid_out <- unlist(grid_out)
         grid_out
     }
     weights_out <- vapply(v_period, roll_combine, numeric(3))
     weights_out <- (as.data.frame(t(weights_out)))[, 1:2]
     # weights and scale for verification period
-    comb_out <- cbind(obs = x[v_period], mu1 = mu1[v_period],
-                      sd1 = sd1[v_period], mu2 = mu2[v_period],
-                      sd2 = sd2[v_period], weights_out)
+    comb_out <- cbind(obs = x[v_period], mu1 = mu1[v_period], 
+        sd1 = sd1[v_period], mu2 = mu2[v_period], sd2 = sd2[v_period], 
+        weights_out)
     comb_out
 }
 #' Moments of the SLP of two Normals
@@ -98,22 +98,24 @@ combineSLP <- function(x, par_one = list(mean = NULL, sd = NULL),
 #' slp_moments(list(mean = 15, sd = 0.8), list(mean = 18, sd = 1), 0.7, 1.2)
 #' @author J. Gross, A. Moeller.
 #'
-slp_moments <- function(par_one = list(mean = NULL, sd = NULL),
-                        par_two = par_one,
-                        weight_one = rep(0.5, length(par_one$mean)),
-                        scale = rep(1, length(par_one$sd))) {
-  w1 <- weight_one
-  if (any((w1 < 0) | (w1 > 1))) stop("weights must lie between 0 and 1")
-  w2 <- 1 - weight_one
-  s <- scale
-  if (any(s < 0)) stop("scale must be positive")
-  mu1 <- par_one$mean
-  sd1 <- (par_one$sd * s)
-  mu2 <- par_two$mean
-  sd2 <- (par_two$sd * s)
-  mu_slp <- w1 * mu1 + w2 * mu2
-  sd_slp <- sqrt(w1 * (mu1^2 + sd1^2) + w2 * (mu2^2 + sd2^2) - mu_slp^2)
-  out <- list(mean = mu_slp, sd = sd_slp)
-  out
+slp_moments <- function(par_one = list(mean = NULL, sd = NULL), 
+    par_two = par_one, weight_one = rep(0.5, length(par_one$mean)), 
+    scale = rep(1, length(par_one$sd))) {
+    w1 <- weight_one
+    if (any((w1 < 0) | (w1 > 1))) 
+        stop("weights must lie between 0 and 1")
+    w2 <- 1 - weight_one
+    s <- scale
+    if (any(s < 0)) 
+        stop("scale must be positive")
+    mu1 <- par_one$mean
+    sd1 <- (par_one$sd * s)
+    mu2 <- par_two$mean
+    sd2 <- (par_two$sd * s)
+    mu_slp <- w1 * mu1 + w2 * mu2
+    sd_slp <- sqrt(w1 * (mu1^2 + sd1^2) + w2 * (mu2^2 + sd2^2) - 
+        mu_slp^2)
+    out <- list(mean = mu_slp, sd = sd_slp)
+    out
 }
 # --

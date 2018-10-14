@@ -31,10 +31,9 @@ missing observation.
 \examples{
 na_gaps(c(1, NA, NA, 1, 1, NA, NA, NA, 1, NA, NA, 1, 1, 1, NA, NA))
 }
-\author{
-J. Gross, A. Moeller.
-}
 \seealso{
 \code{\link[stats]{complete.cases}}
 }
-
+\author{
+J. Gross, A. Moeller.
+}

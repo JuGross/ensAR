@@ -30,12 +30,13 @@ crps_norm <- function(x, mu1, sd1, mu2 = mu1, sd2 = sd1, w1 = 1) {
     }
     w2 <- 1 - w1
     val_1 <- w1 * A((x - mu1), sd1)
-    if (w2 == 0) {val <- val_1} else {
-    val <- val_1 + w2 * A((x - mu2), sd2) -
-      0.5 * ((w1^2) * A(0, sqrt(2 * sd1^2)) +
-               w1 * w2 * A((mu1 - mu2), sqrt(sd1^2 + sd2^2)) +
-               w2 * w1 * A((mu2 - mu1), sqrt(sd1^2 + sd2^2)) +
-               (w2^2) * A(0, sqrt(2 * sd2^2)))
+    if (w2 == 0) {
+        val <- val_1
+    } else {
+        val <- val_1 + w2 * A((x - mu2), sd2) - 0.5 * ((w1^2) * 
+            A(0, sqrt(2 * sd1^2)) + w1 * w2 * A((mu1 - mu2), sqrt(sd1^2 + 
+            sd2^2)) + w2 * w1 * A((mu2 - mu1), sqrt(sd1^2 + sd2^2)) + 
+            (w2^2) * A(0, sqrt(2 * sd2^2)))
     }
     val
 }
@@ -80,16 +81,16 @@ crps_norm <- function(x, mu1, sd1, mu2 = mu1, sd2 = sd1, w1 = 1) {
 #' @examples
 #' veri_stats(17.5, par_one = list(mean = 15, sd = 1))
 #' @author J. Gross, A. Moeller.
-veri_stats <- function(x, par_one = list(mean = NULL, sd = NULL),
-                       par_two = par_one, weight_one = NULL,
-                       scale = NULL) {
+veri_stats <- function(x, par_one = list(mean = NULL, sd = NULL), 
+    par_two = par_one, weight_one = NULL, scale = NULL) {
     if (is.null(weight_one)) {
         mu <- par_one$mean
         sd <- par_one$sd
         pit <- pnorm(x, mu, sd)
         z <- (x - mu)/sd
         dss <- z^2 + 2 * log(sd)
-        crps <- sd * (z * (2 * pnorm(z) - 1) + 2 * dnorm(z) - 1/sqrt(pi))
+        crps <- sd * (z * (2 * pnorm(z) - 1) + 2 * dnorm(z) - 
+            1/sqrt(pi))
         predvariance <- sd^2
     } else {
         # slp combination
@@ -106,15 +107,16 @@ veri_stats <- function(x, par_one = list(mean = NULL, sd = NULL),
         sd2 <- par_two$sd * s
         pit <- w1 * pnorm(x, mu1, sd1) + w2 * pnorm(x, mu2, sd2)
         mu_comb <- w1 * mu1 + w2 * mu2
-        var_comb <- w1 * (mu1^2 + sd1^2) + w2 * (mu2^2 + sd2^2) - mu_comb^2
+        var_comb <- w1 * (mu1^2 + sd1^2) + w2 * (mu2^2 + sd2^2) - 
+            mu_comb^2
         dss <- ((x - mu_comb)^2)/var_comb + 2 * log(sqrt(var_comb))
         predvariance <- var_comb
-        crps <- crps_norm(x = x, mu1 = mu1, sd1 = sd1, mu2 = mu2,
+        crps <- crps_norm(x = x, mu1 = mu1, sd1 = sd1, mu2 = mu2, 
             sd2 = sd2, w1 = w1)
     }
     pit_var <- var(pit, na.rm = TRUE)
     predvariance_rmv <- sqrt(mean(predvariance, na.rm = TRUE))
-    out <- list(pit = pit, crps = crps, dss = dss, pitvar = pit_var,
+    out <- list(pit = pit, crps = crps, dss = dss, pitvar = pit_var, 
         rmv = predvariance_rmv)
     class(out) <- "veri_stats"
     out
@@ -130,16 +132,15 @@ veri_stats <- function(x, par_one = list(mean = NULL, sd = NULL),
 #' @return A data frame with one row and corresponding row name given by \code{method_name}.
 #' @examples
 #' x <- veri_stats(17.5, par_one = list(mean = 15,sd = 1.5))
-#' veri_synop(x, method = "No method", digits = 3)
+#' veri_synop(x, method = 'No method', digits = 3)
 #' #' @author J. Gross, A. Moeller.
 veri_synop <- function(x, method_name = NULL, digits = 4) {
-    if (!(class(x) == "veri_stats")) stop("input must be of class 'veri_stats'")
-    out <- data.frame(Length = length(x$crps),
-                            Av.CRPS = mean(x$crps),
-                            Av.DSS = mean(x$dss),
-                            PIT.var = x$pitvar,
-                            RMV = x$rmv)
+    if (!(class(x) == "veri_stats")) 
+        stop("input must be of class 'veri_stats'")
+    out <- data.frame(Length = length(x$crps), Av.CRPS = mean(x$crps), 
+        Av.DSS = mean(x$dss), PIT.var = x$pitvar, RMV = x$rmv)
     rownames(out) <- method_name
-    if (!is.null(digits)) out <- round(x= out, digits = digits)
+    if (!is.null(digits)) 
+        out <- round(x = out, digits = digits)
     out
 }

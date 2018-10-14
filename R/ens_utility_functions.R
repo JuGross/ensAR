@@ -38,8 +38,7 @@ na_gaps <- function(x) {
         gap_table <- as.table(c(tab1, tab2))
         gap_lengths <- as.numeric(names(gap_table))
     }
-    out <- list(table = gap_table, lengths = gap_lengths,
-                number = na_numb)
+    out <- list(table = gap_table, lengths = gap_lengths, number = na_numb)
     class(out) <- "na_gaps"
     out
 }
@@ -72,19 +71,20 @@ print.na_gaps <- function(x, ...) print.table(x$table, ...)
 #'
 # --
 convert_chardate <- function(x) {
-    if (any(is.na(x))) stop("input dates contain NA's")
-    if (any(duplicated(x))) stop("input dates contain duplicates")
+    if (any(is.na(x))) 
+        stop("input dates contain NA's")
+    if (any(duplicated(x))) 
+        stop("input dates contain duplicates")
     x_dates <- as.Date(x, format = "%Y%m%d")
     if (is.unsorted(x_dates)) {
-      x_dates <- sort(x_dates)
-      warning("input dates are not in chronological order")
+        x_dates <- sort(x_dates)
+        warning("input dates are not in chronological order")
     }
-    obs_dates <- chron::chron(dates. = as.character(x_dates),
-                              format = c(dates = "y-m-d"),
-                              out.format = c(dates = "y-m-d"))
+    obs_dates <- chron::chron(dates. = as.character(x_dates), 
+        format = c(dates = "y-m-d"), out.format = c(dates = "y-m-d"))
     n <- length(obs_dates)
-    gen_dates <- chron::seq.dates(obs_dates[1], obs_dates[n],
-                                  by = "days")
+    gen_dates <- chron::seq.dates(obs_dates[1], obs_dates[n], 
+        by = "days")
     if (n < length(gen_dates)) {
         mis_dates <- gen_dates[(!(gen_dates %in% obs_dates))]
         mis_dates <- as.Date(mis_dates, format = "%Y%m%d")
@@ -117,10 +117,10 @@ convert_chardate <- function(x) {
 previous_equal <- function(x, previous = 10) {
     lower <- previous + 1
     upper <- length(x)
-    if (lower >= upper)
+    if (lower >= upper) 
         stop("Not possible")
     range_equal <- function(element) {
-        isTRUE(all.equal(x[(element + 1 - lower):element], rep(x[element],
+        isTRUE(all.equal(x[(element + 1 - lower):element], rep(x[element], 
             lower)))
     }
     out_equal <- vapply(lower:upper, range_equal, logical(1))

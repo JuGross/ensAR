@@ -32,4 +32,3 @@ table(x)
 \author{
 J. Gross, A. Moeller.
 }
-

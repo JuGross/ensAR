@@ -49,9 +49,6 @@ s1 <- arima.sim(list(ar = 0.7), sd = 0.5, 100)
 s2 <- arima.sim(list(ar = 0.7), sd = 0.5, 100) - 0.1
 dm_test(s1, s2)
 }
-\author{
-J. Gross, A. Moeller.
-}
 \references{
 Diebold F.X, Mariano R.S. 1995. Comparing predictive accuracy.
 \emph{Journal of Business & Economic Statistics}, \strong{13}, 253--263.
@@ -63,4 +60,6 @@ Gneiting T., Katzfuss  M. 2014. Probabilistic forecasting.
 \seealso{
 \code{\link[forecast]{dm.test}} in package \pkg{forecast}.
 }
-
+\author{
+J. Gross, A. Moeller.
+}

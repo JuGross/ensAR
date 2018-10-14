@@ -35,9 +35,6 @@ for the special case of two normals.
 \examples{
 crps_norm(0.5, -1, 1, 2, 1, 0.2)
 }
-\author{
-J. Gross, A. Moeller.
-}
 \references{
 Grimit E.P., Gneiting T., Berrocal V., Johnson N.A.
 2006. The continuous ranked probability score for circular
@@ -45,4 +42,6 @@ variables and its application to mesoscale forecast ensemble
 verification. \emph{Quarterly Journal of the Royal Meteorological
 Society}, \strong{132}, 2925--2942.
 }
-
+\author{
+J. Gross, A. Moeller.
+}

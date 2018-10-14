@@ -34,4 +34,3 @@ convert_chardate(x)
 \author{
 J. Gross, A. Moeller.
 }
-

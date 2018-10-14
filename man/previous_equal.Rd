@@ -33,4 +33,3 @@ previous_equal(x, previous = 2) # 1/6
 \author{
 J. Gross, A. Moeller.
 }
-

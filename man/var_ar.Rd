@@ -33,4 +33,3 @@ var_ar(ar = 0.7, i_var= 0.5^2)
 \author{
 J. Gross, A. Moeller.
 }
-

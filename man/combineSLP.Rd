@@ -4,9 +4,9 @@
 \alias{combineSLP}
 \title{Spread-Adjusted Linear Pool (SLP) of two Normals}
 \usage{
-combineSLP(x, par_one = list(mean = NULL, sd = NULL), par_two = par_one,
-  train = 90, weight_grid = seq(0, 1, 0.1), scale_grid = seq(0.6, 1.4,
-  0.1))
+combineSLP(x, par_one = list(mean = NULL, sd = NULL),
+  par_two = par_one, train = 90, weight_grid = seq(0, 1, 0.1),
+  scale_grid = seq(0.6, 1.4, 0.1))
 }
 \arguments{
 \item{x}{A vector of observations of a weather quantity.}
@@ -48,12 +48,11 @@ combineSLP(16.1, list(mean = 15, sd = 0.8), list(mean = 18, sd = 1), 0)
 
 
 }
-\author{
-J. Gross, A. Moeller.
-}
 \references{
 Gneiting T.,  Ranjan R. 2013. Combining predictive
 distributions. \emph{Electronic Journal of Statistics},
 \strong{7},  1747--1782.
 }
-
+\author{
+J. Gross, A. Moeller.
+}

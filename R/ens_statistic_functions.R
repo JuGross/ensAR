@@ -43,39 +43,39 @@
 #' s1 <- arima.sim(list(ar = 0.7), sd = 0.5, 100)
 #' s2 <- arima.sim(list(ar = 0.7), sd = 0.5, 100) - 0.1
 #' dm_test(s1, s2)
-dm_test <- function(s1, s2,
-                    alternative = c("two.sided", "less", "greater"),
-                    h = 1) {
-  if (length(s1) != length(s2)) {
-    stop("imput vectors must have same length")
-  }
-  alternative <- match.arg(alternative)
-  dname <- paste(deparse(substitute(s1)), deparse(substitute(s2)))
-  d <- s1 - s2
-  if (any(is.na(d))) {
-    warning("missig values: autocovariance estimate may not be valid")
-  }
-  d <- d[complete.cases(d)]
-  n_d <- length(d)
-  acf_est <- acf(d, type = "covariance", lag.max = h - 1, plot = FALSE)
-  d_acf <- acf_est$acf[, , 1]
-  d_var <- sum(c(d_acf[1], 2 * d_acf[-1]))/n_d
-  if (d_var < 0) {
-    S <- NA
-    pval <- 0
-  } else {
-    S <- mean(d)/sqrt(d_var)
-    if (alternative == "two.sided")
-      pval <- 2 * pnorm(-abs(S)) else if (alternative == "less")
-        pval <- pnorm(S) else if (alternative == "greater")
-          pval <- pnorm(S, lower.tail = FALSE)
-  }
-  para <- h - 1
-  names(para) = c("truncation lag")
-  RVAL <- list(statistic = c(DW = S), parameter = para, p.value = pval,
-               alternative = alternative, method = "Diebold-Mariano test", data.name = dname)
-  class(RVAL) <- "htest"
-  return(RVAL)
+dm_test <- function(s1, s2, alternative = c("two.sided", "less", 
+    "greater"), h = 1) {
+    if (length(s1) != length(s2)) {
+        stop("imput vectors must have same length")
+    }
+    alternative <- match.arg(alternative)
+    dname <- paste(deparse(substitute(s1)), deparse(substitute(s2)))
+    d <- s1 - s2
+    if (any(is.na(d))) {
+        warning("missig values: autocovariance estimate may not be valid")
+    }
+    d <- d[complete.cases(d)]
+    n_d <- length(d)
+    acf_est <- acf(d, type = "covariance", lag.max = h - 1, plot = FALSE)
+    d_acf <- acf_est$acf[, , 1]
+    d_var <- sum(c(d_acf[1], 2 * d_acf[-1]))/n_d
+    if (d_var < 0) {
+        S <- NA
+        pval <- 0
+    } else {
+        S <- mean(d)/sqrt(d_var)
+        if (alternative == "two.sided") 
+            pval <- 2 * pnorm(-abs(S)) else if (alternative == "less") 
+            pval <- pnorm(S) else if (alternative == "greater") 
+            pval <- pnorm(S, lower.tail = FALSE)
+    }
+    para <- h - 1
+    names(para) = c("truncation lag")
+    RVAL <- list(statistic = c(DW = S), parameter = para, p.value = pval, 
+        alternative = alternative, method = "Diebold-Mariano test", 
+        data.name = dname)
+    class(RVAL) <- "htest"
+    return(RVAL)
 }
 #' Variance of an AR process
 #' @export
@@ -99,11 +99,11 @@ dm_test <- function(s1, s2,
 #' var_ar(ar = 0.7, i_var= 0.5^2)
 var_ar <- function(ar = numeric(), i_var = 1) {
     p <- length(ar)
-    if (p == 0)
+    if (p == 0) 
         var_out <- i_var
-    if (p == 1)
+    if (p == 1) 
         var_out <- i_var/(1 - ar^2)
-    if (p > 1)
+    if (p > 1) 
         var_out <- i_var/sum(ARMAacf(ar = ar) * c(1, -ar))
     var_out
 }
