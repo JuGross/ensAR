@@ -16,7 +16,7 @@
 }
 #'
 #' Convex Combination
-#' @description Computes a convex combination of two vector of the same length
+#' @description Computes a convex combination of two vectors of the same length
 #' @param x A vector.
 #' @param y A vector of the same length as x.
 #' @param w A weight vector of the same length as x.

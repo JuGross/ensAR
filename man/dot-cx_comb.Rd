@@ -17,7 +17,7 @@
 A vector of the same length as x and y.
 }
 \description{
-Computes a convex combination of two vector of the same length
+Computes a convex combination of two vectors of the same length
 }
 \examples{
 \dontrun{
