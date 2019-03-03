@@ -32,8 +32,8 @@
 #'
 #'
 combineSLP <- function(x, par_one = list(mean = NULL, sd = NULL), par_two = par_one, 
-    train = 90, weight_grid = seq(0, 1, 0.1), scale_grid = seq(0.6, 
-        1.4, 0.1)) {
+    train = 90, weight_grid = seq(0, 1, 0.1), scale_grid = seq(0.6, 1.4, 
+        0.1)) {
     n <- length(x)
     m <- train
     if (n <= m) 

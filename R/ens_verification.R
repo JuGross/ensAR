@@ -30,14 +30,10 @@ crps_norm <- function(x, mu1, sd1, mu2 = mu1, sd2 = sd1, w1 = 1) {
     }
     w2 <- 1 - w1
     val_1 <- w1 * A((x - mu1), sd1)
-    if (w2 == 0) {
-        val <- val_1 - sd1/sqrt(pi)
-    } else {
-        val <- val_1 + w2 * A((x - mu2), sd2) - 0.5 * ((w1^2) * A(0, 
-            sqrt(2 * sd1^2)) + w1 * w2 * A((mu1 - mu2), sqrt(sd1^2 + 
-            sd2^2)) + w2 * w1 * A((mu2 - mu1), sqrt(sd1^2 + sd2^2)) + 
-            (w2^2) * A(0, sqrt(2 * sd2^2)))
-    }
+    val <- val_1 + w2 * A((x - mu2), sd2) - 0.5 * ((w1^2) * A(0, sqrt(2 * 
+        sd1^2)) + w1 * w2 * A((mu1 - mu2), sqrt(sd1^2 + sd2^2)) + w2 * 
+        w1 * A((mu2 - mu1), sqrt(sd1^2 + sd2^2)) + (w2^2) * A(0, sqrt(2 * 
+        sd2^2)))
     val
 }
 #' Verification Statistics
@@ -114,8 +110,7 @@ veri_stats <- function(x, par_one = list(mean = NULL, sd = NULL), par_two = par_
     }
     pit_var <- var(pit, na.rm = TRUE)
     predvariance_rmv <- sqrt(mean(predvariance, na.rm = TRUE))
-    out <- list(pit = pit, crps = crps, dss = dss, pitvar = pit_var, 
-        rmv = predvariance_rmv)
+    out <- list(pit = pit, crps = crps, dss = dss, pitvar = pit_var, rmv = predvariance_rmv)
     class(out) <- "veri_stats"
     out
 }

@@ -72,8 +72,7 @@ dm_test <- function(s1, s2, alternative = c("two.sided", "less", "greater"),
     para <- h - 1
     names(para) = c("truncation lag")
     RVAL <- list(statistic = c(DW = S), parameter = para, p.value = pval, 
-        alternative = alternative, method = "Diebold-Mariano test", 
-        data.name = dname)
+        alternative = alternative, method = "Diebold-Mariano test", data.name = dname)
     class(RVAL) <- "htest"
     return(RVAL)
 }

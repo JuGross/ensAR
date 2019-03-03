@@ -86,10 +86,10 @@ ar_ensemble <- function(ens, obs_col, mem_col, train = 90) {
             p <- z_mod$order
             mu <- z_mod$x.mean
             a <- z_mod$ar
-            # one-step ahead prediction of obs for time k = forecast_day based
-            # on times k-1, ..., k-p:
-            out_forecast_day <- member[forecast_day] + mu + sum(a * 
-                (z[(train_length - (1:p))] - mu))
+            # one-step ahead prediction of obs for time k = forecast_day based on
+            # times k-1, ..., k-p:
+            out_forecast_day <- member[forecast_day] + mu + sum(a * (z[(train_length - 
+                (1:p))] - mu))
             # estimated variance of z from model fit:
             out_var_day <- var_ar(ar = a, i_var = z_mod$var.pred)
             return(c(forecast = out_forecast_day, variance = out_var_day))
@@ -176,8 +176,7 @@ ar_preddistr <- function(ar_ens, train = 30) {
         w_out <- vapply(v_period, roll_preddistr, numeric(1))
         # sd_out <- w_out * (sd_out_1[v_period]) + (1 - w_out) *
         # sd_out_2[v_period]
-        sd_out <- .cx_comb(sd_out_1[v_period], sd_out_2[v_period], 
-            w_out)
+        sd_out <- .cx_comb(sd_out_1[v_period], sd_out_2[v_period], w_out)
     }
     out <- cbind(obs = y[v_period], mu = mu_out[v_period], sd = sd_out, 
         w = w_out, ar_ens$additional[v_period, ])
