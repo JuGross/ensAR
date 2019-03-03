@@ -86,8 +86,8 @@ ar_ensemble <- function(ens, obs_col, mem_col, train = 90) {
             p <- z_mod$order
             mu <- z_mod$x.mean
             a <- z_mod$ar
-            # one-step ahead prediction of obs for time k = forecast_day
-            # based on times k-1, ..., k-p:
+            # one-step ahead prediction of obs for time k = forecast_day based
+            # on times k-1, ..., k-p:
             out_forecast_day <- member[forecast_day] + mu + sum(a * 
                 (z[(train_length - (1:p))] - mu))
             # estimated variance of z from model fit:
@@ -103,8 +103,8 @@ ar_ensemble <- function(ens, obs_col, mem_col, train = 90) {
     ens_var <- as.data.frame(lapply(ret_ens, function(x) x[[2]]))
     # 
     out <- list(observation = ens[forecast_period, obs_col], forecast = ens_forecast, 
-        variance = ens_var, additional = ens[forecast_period, 
-            -c(obs_col, mem_col)])
+        variance = ens_var, additional = ens[forecast_period, -c(obs_col, 
+            mem_col)])
     class(out) <- "ar_ens"
     out
     
@@ -161,8 +161,8 @@ ar_preddistr <- function(ar_ens, train = 30) {
             m_crps <- function(par) {
                 m_obs <- y[train_period]
                 m_mu <- mu_out[train_period]
-                m_sd <- par[1] * sd_out_1[train_period] + (1 - 
-                  par[1]) * sd_out_2[train_period]
+                m_sd <- par[1] * sd_out_1[train_period] + (1 - par[1]) * 
+                  sd_out_2[train_period]
                 # vals <- crps_norm(m_obs, m_mu, m_sd)
                 z <- (m_obs - m_mu)/m_sd
                 vals <- m_sd * (z * (2 * pnorm(z) - 1) + 2 * dnorm(z) - 

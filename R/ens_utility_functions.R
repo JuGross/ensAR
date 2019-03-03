@@ -80,11 +80,10 @@ convert_chardate <- function(x) {
         x_dates <- sort(x_dates)
         warning("input dates are not in chronological order")
     }
-    obs_dates <- chron::chron(dates. = as.character(x_dates), 
-        format = c(dates = "y-m-d"), out.format = c(dates = "y-m-d"))
+    obs_dates <- chron::chron(dates. = as.character(x_dates), format = c(dates = "y-m-d"), 
+        out.format = c(dates = "y-m-d"))
     n <- length(obs_dates)
-    gen_dates <- chron::seq.dates(obs_dates[1], obs_dates[n], 
-        by = "days")
+    gen_dates <- chron::seq.dates(obs_dates[1], obs_dates[n], by = "days")
     if (n < length(gen_dates)) {
         mis_dates <- gen_dates[(!(gen_dates %in% obs_dates))]
         mis_dates <- as.Date(mis_dates, format = "%Y%m%d")

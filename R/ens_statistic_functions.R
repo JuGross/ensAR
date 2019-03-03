@@ -43,8 +43,8 @@
 #' s1 <- arima.sim(list(ar = 0.7), sd = 0.5, 100)
 #' s2 <- arima.sim(list(ar = 0.7), sd = 0.5, 100) - 0.1
 #' dm_test(s1, s2)
-dm_test <- function(s1, s2, alternative = c("two.sided", "less", 
-    "greater"), h = 1) {
+dm_test <- function(s1, s2, alternative = c("two.sided", "less", "greater"), 
+    h = 1) {
     if (length(s1) != length(s2)) {
         stop("imput vectors must have same length")
     }
