@@ -4,7 +4,7 @@
 \alias{ar_ensemble}
 \title{AR Ensemble}
 \usage{
-ar_ensemble(ens, obs_col, mem_col, train = 90)
+ar_ensemble(ens, obs_col, mem_col, train = 90, skip = 0)
 }
 \arguments{
 \item{ens}{A data frame with one observation column, at least
@@ -16,6 +16,10 @@ one forecast column, and at least one additional column (e.g. date).}
 
 \item{train}{The length of the rolling training period used for
 fitting an autoregressive process.}
+
+\item{skip}{A number corresponding to the forecast ahead time (0 for ahead times
+not greater than 24 hours, 1 for ahead times greater than 24 hours and not greater
+than 48 hours, and so on).}
 }
 \value{
 A list with four elements:
@@ -42,7 +46,8 @@ i.e. for each row the difference between forecast and observation
 is the forecast error.
 }
 \examples{
-ar_ensemble(Magdeburg[1:(90 + 1),], obs_col = 6, mem_col = 7:56)
+ar_ensemble(Magdeburg[1:(90 + 1),-c(57,58)], obs_col = 6, mem_col = 7:56)
+ar_ensemble(Magdeburg48[1:(90 + 1),-c(57,58)], obs_col = 6, mem_col = 7:56, skip = 1)
 
 }
 \author{

@@ -30,6 +30,7 @@ rank_ensemble <- function(ens, obs_col, mem_col) {
 #' AR Ensemble
 #' @export
 #' @importFrom stats ar
+#' @importFrom stats predict
 #' @importFrom zoo na.spline
 #' @description For each member of a forecast ensemble,
 #' a corresponding autoregressive modified member is generated.
@@ -40,6 +41,9 @@ rank_ensemble <- function(ens, obs_col, mem_col) {
 #' @param mem_col The column(s) of the forecast members(s).
 #' @param train The length of the rolling training period used for
 #' fitting an autoregressive process.
+#' @param skip A number corresponding to the forecast ahead time (0 for ahead times
+#'  not greater than 24 hours, 1 for ahead times greater than 24 hours and not greater
+#'  than 48 hours, and so on).
 #' @return A list with four elements:
 #' \describe{
 #' \item{\code{observation}}{A numeric vector containing the
@@ -60,9 +64,10 @@ rank_ensemble <- function(ens, obs_col, mem_col) {
 #'
 #' @author J. Gross, A. Moeller.
 #' @examples
-#' ar_ensemble(Magdeburg[1:(90 + 1),], obs_col = 6, mem_col = 7:56)
+#' ar_ensemble(Magdeburg[1:(90 + 1),-c(57,58)], obs_col = 6, mem_col = 7:56)
+#' ar_ensemble(Magdeburg48[1:(90 + 1),-c(57,58)], obs_col = 6, mem_col = 7:56, skip = 1)
 #'
-ar_ensemble <- function(ens, obs_col, mem_col, train = 90) {
+ar_ensemble <- function(ens, obs_col, mem_col, train = 90, skip = 0) {
     if (!is.data.frame(ens)) 
         stop("ensemble input must be a data frame")
     if (any(!complete.cases(ens[, c(obs_col, mem_col)]))) {
@@ -82,6 +87,14 @@ ar_ensemble <- function(ens, obs_col, mem_col, train = 90) {
             # to be applied to forecast period
             train_period <- (forecast_day - (train_length:1))
             z <- (y - member)[train_period]  # forecast error series
+            # --
+            if (skip > 0) {
+                zs <- z[1:(length(z) - skip)]
+                zs_mod <- ar(x = zs, aic = TRUE, order.max = NULL)
+                zs_pred <- predict(object = zs_mod, n.ahead = skip, se.fit = FALSE)
+                z <- c(zs, zs_pred)
+            }
+            # --
             z_mod <- ar(x = z, aic = TRUE, order.max = NULL)
             p <- z_mod$order
             mu <- z_mod$x.mean

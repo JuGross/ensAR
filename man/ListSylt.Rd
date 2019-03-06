@@ -20,9 +20,10 @@
 ListSylt
 }
 \description{
-The data set contains 24-h ahead forecasts for 2-m surface
+The data set contains 24-h ahead forecasts initialized at 12 UTC
+for 2-m surface
 temperature along with the verifying observations at station
-'List auf Sylt' for about 12 years.
+'List auf Sylt'.
 }
 \references{
 Hemri S, Scheuerer M, Pappenberger F, Bogner K, Haiden T. 2014. Trends in the
