@@ -110,7 +110,8 @@ veri_stats <- function(x, par_one = list(mean = NULL, sd = NULL), par_two = par_
     }
     pit_var <- var(pit, na.rm = TRUE)
     predvariance_rmv <- sqrt(mean(predvariance, na.rm = TRUE))
-    out <- list(pit = pit, crps = crps, dss = dss, pitvar = pit_var, rmv = predvariance_rmv)
+    out <- list(pit = pit, crps = crps, dss = dss, pitvar = pit_var, 
+        rmv = predvariance_rmv)
     class(out) <- "veri_stats"
     out
 }

@@ -68,11 +68,11 @@ rank_ensemble <- function(ens, obs_col, mem_col) {
 #' ar_ensemble(Magdeburg48[1:(90 + 1),-c(57,58)], obs_col = 6, mem_col = 7:56, skip = 1)
 #'
 ar_ensemble <- function(ens, obs_col, mem_col, train = 90, skip = 0) {
-    if (!is.data.frame(ens))
+    if (!is.data.frame(ens)) 
         stop("ensemble input must be a data frame")
     if (any(!complete.cases(ens[, c(obs_col, mem_col)]))) {
         warning("occurring NA's were replaced by spline interpolation")
-        ens_approx <- apply(ens[, c(obs_col, mem_col)], 2, zoo::na.spline,
+        ens_approx <- apply(ens[, c(obs_col, mem_col)], 2, zoo::na.spline, 
             na.rm = FALSE)
         ens[, obs_col] <- ens_approx[, 1]
         ens[, mem_col] <- ens_approx[, -1]
@@ -101,7 +101,7 @@ ar_ensemble <- function(ens, obs_col, mem_col, train = 90, skip = 0) {
             a <- z_mod$ar
             # one-step ahead prediction of obs for time k = forecast_day based on
             # times k-1, ..., k-p:
-            out_forecast_day <- member[forecast_day] + mu + sum(a * (z[(train_length -
+            out_forecast_day <- member[forecast_day] + mu + sum(a * (z[(train_length - 
                 (1:p))] - mu))
             # estimated variance of z from model fit:
             out_var_day <- var_ar(ar = a, i_var = z_mod$var.pred)
@@ -114,13 +114,13 @@ ar_ensemble <- function(ens, obs_col, mem_col, train = 90, skip = 0) {
     # -
     ens_forecast <- as.data.frame(lapply(ret_ens, function(x) x[[1]]))
     ens_var <- as.data.frame(lapply(ret_ens, function(x) x[[2]]))
-    #
-    out <- list(observation = ens[forecast_period, obs_col], forecast = ens_forecast,
-        variance = ens_var, additional = ens[forecast_period, -c(obs_col,
+    # 
+    out <- list(observation = ens[forecast_period, obs_col], forecast = ens_forecast, 
+        variance = ens_var, additional = ens[forecast_period, -c(obs_col, 
             mem_col)])
     class(out) <- "ar_ens"
     out
-
+    
 }
 #' Predictive Moments from an AR Ensemble
 #' @export
@@ -151,12 +151,12 @@ ar_ensemble <- function(ens, obs_col, mem_col, train = 90, skip = 0) {
 #' mod <- ar_ensemble(Magdeburg[1:(90 + 30 + 1),], obs_col = 6, mem_col = 7:56)
 #' ar_preddistr(mod) # data frame of one row
 ar_preddistr <- function(ar_ens, train = 30) {
-    if (!(class(ar_ens) == "ar_ens"))
+    if (!(class(ar_ens) == "ar_ens")) 
         stop("input must be of class 'ar_ens'")
     y <- ar_ens$observation
     n <- length(y)
     m <- train
-    if (n <= m)
+    if (n <= m) 
         stop("too less observations")
     sample_sd <- function(x) sqrt(mean(scale(x, scale = FALSE)^2))
     # length n objects
@@ -174,15 +174,15 @@ ar_preddistr <- function(ar_ens, train = 30) {
             m_crps <- function(par) {
                 m_obs <- y[train_period]
                 m_mu <- mu_out[train_period]
-                m_sd <- par[1] * sd_out_1[train_period] + (1 - par[1]) *
+                m_sd <- par[1] * sd_out_1[train_period] + (1 - par[1]) * 
                   sd_out_2[train_period]
                 # vals <- crps_norm(m_obs, m_mu, m_sd)
                 z <- (m_obs - m_mu)/m_sd
-                vals <- m_sd * (z * (2 * pnorm(z) - 1) + 2 * dnorm(z) -
+                vals <- m_sd * (z * (2 * pnorm(z) - 1) + 2 * dnorm(z) - 
                   1/sqrt(pi))
                 mean(vals)
             }
-            res <- optim(par = c(w = 0.5), fn = m_crps, method = "L-BFGS-B",
+            res <- optim(par = c(w = 0.5), fn = m_crps, method = "L-BFGS-B", 
                 lower = 0, upper = 1)
             res$par["w"]
         }
@@ -191,7 +191,7 @@ ar_preddistr <- function(ar_ens, train = 30) {
         # sd_out_2[v_period]
         sd_out <- .cx_comb(sd_out_1[v_period], sd_out_2[v_period], w_out)
     }
-    out <- cbind(obs = y[v_period], mu = mu_out[v_period], sd = sd_out,
+    out <- cbind(obs = y[v_period], mu = mu_out[v_period], sd = sd_out, 
         w = w_out, ar_ens$additional[v_period, ])
     out
 }
@@ -203,6 +203,9 @@ ar_preddistr <- function(ar_ens, train = 30) {
 #' one forecast column, and at least one additional column (e.g. date).
 #' @param obs_col The observation column.
 #' @param mem_col The column(s) of the forecast members(s).
+#' @param skip A number corresponding to the forecast ahead time (0 for ahead times
+#'  not greater than 24 hours, 1 for ahead times greater than 24 hours and not greater
+#'  than 48 hours, and so on).
 #' @param train_ar The length of the rolling training period used for
 #' fitting an autoregressive process.
 #' @param train_crps The length of the additional training period used
@@ -212,11 +215,12 @@ ar_preddistr <- function(ar_ens, train = 30) {
 #' @examples
 #' ensembleAR(Magdeburg[1:(90 + 30 + 1),], obs_col = 6, mem_col = 7:56)
 #'
-ensembleAR <- function(ens, obs_col, mem_col, skip = 0, train_ar = 90, train_crps = 30) {
-  out1 <- ar_ensemble(ens = ens, obs_col = obs_col, mem_col = mem_col,
-                      train = train_ar, skip = skip)
-  out2 <- ar_preddistr(out1, train = train_crps)
-  out2
+ensembleAR <- function(ens, obs_col, mem_col, skip = 0, train_ar = 90, 
+    train_crps = 30) {
+    out1 <- ar_ensemble(ens = ens, obs_col = obs_col, mem_col = mem_col, 
+        train = train_ar, skip = skip)
+    out2 <- ar_preddistr(out1, train = train_crps)
+    out2
 }
 
 

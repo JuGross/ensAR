@@ -4,7 +4,8 @@
 \alias{ensembleAR}
 \title{AR Ensemble and Predictive Distribution}
 \usage{
-ensembleAR(ens, obs_col, mem_col, train_ar = 90, train_crps = 30)
+ensembleAR(ens, obs_col, mem_col, skip = 0, train_ar = 90,
+  train_crps = 30)
 }
 \arguments{
 \item{ens}{A data frame with one observation column, at least
@@ -13,6 +14,10 @@ one forecast column, and at least one additional column (e.g. date).}
 \item{obs_col}{The observation column.}
 
 \item{mem_col}{The column(s) of the forecast members(s).}
+
+\item{skip}{A number corresponding to the forecast ahead time (0 for ahead times
+not greater than 24 hours, 1 for ahead times greater than 24 hours and not greater
+than 48 hours, and so on).}
 
 \item{train_ar}{The length of the rolling training period used for
 fitting an autoregressive process.}
