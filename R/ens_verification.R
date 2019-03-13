@@ -127,7 +127,7 @@ veri_stats <- function(x, par_one = list(mean = NULL, sd = NULL), par_two = par_
 #' @examples
 #' x <- veri_stats(17.5, par_one = list(mean = 15,sd = 1.5))
 #' veri_synop(x, method = 'No method', digits = 3)
-#' #' @author J. Gross, A. Moeller.
+#' @author J. Gross, A. Moeller.
 veri_synop <- function(x, method_name = NULL, digits = 4) {
     if (!(class(x) == "veri_stats")) 
         stop("input must be of class 'veri_stats'")
