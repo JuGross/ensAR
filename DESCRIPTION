@@ -1,7 +1,7 @@
 Package: ensAR
 Date: 2018-10-14
 Title: Autoregressive postprocessing methods for ensemble forecasts
-Version: 0.1.0.9000
+Version: 0.2.0.9000
 Authors@R: c(person("Juergen", "Gross", email = "juergen.gross@tu-dortmund.de", role = c("aut", "cre")),
   person("Annette", "Moeller", email = "standardabweichung@yahoo.de", role = c("aut")))
 URL: http://github.com/JuGross/ensAR
