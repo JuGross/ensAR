@@ -46,8 +46,10 @@ i.e. for each row the difference between forecast and observation
 is the forecast error.
 }
 \examples{
-ar_ensemble(Magdeburg[1:(90 + 1),-c(57,58)], obs_col = 6, mem_col = 7:56)
-ar_ensemble(Magdeburg48[1:(90 + 1),-c(57,58)], obs_col = 6, mem_col = 7:56, skip = 1)
+ar_ensemble(ens = Magdeburg[1:(90 + 1), -c(57,58)],
+    obs_col = 6, mem_col = 7:56)
+ar_ensemble(ens = Magdeburg48[1:(90 + 1), -c(57,58)],
+    obs_col = 6, mem_col = 7:56, skip = 1)
 
 }
 \author{

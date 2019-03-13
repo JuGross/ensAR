@@ -18,7 +18,7 @@ A data frame containing
 \item{\code{mu}:}{ predictive mean}
 \item{\code{sd}:}{ predictive standard deviation}
 \item{\code{w}:}{ the weight corresponding to the first employed standard deviation}}
-and additional columns.
+and additional columns as given by \code{additional} when invoking \code{\link{ar_ensemble}}.
 }
 \description{
 Computes the predictive mean and predictive standard
@@ -37,7 +37,8 @@ The weights are chosen in order to minimize the average CRPS computed from a rol
 training period of length \code{train} and assuming a predictive Gaussian distribution.
 }
 \examples{
-mod <- ar_ensemble(Magdeburg[1:(90 + 30 + 1),], obs_col = 6, mem_col = 7:56)
+mod <- ar_ensemble(ens = Magdeburg[1:(90 + 30 + 1), -c(57,58)],
+    obs_col = 6, mem_col = 7:56)
 ar_preddistr(mod) # data frame of one row
 }
 \author{

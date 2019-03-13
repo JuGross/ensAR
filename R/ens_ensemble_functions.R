@@ -64,8 +64,10 @@ rank_ensemble <- function(ens, obs_col, mem_col) {
 #'
 #' @author J. Gross, A. Moeller.
 #' @examples
-#' ar_ensemble(Magdeburg[1:(90 + 1),-c(57,58)], obs_col = 6, mem_col = 7:56)
-#' ar_ensemble(Magdeburg48[1:(90 + 1),-c(57,58)], obs_col = 6, mem_col = 7:56, skip = 1)
+#' ar_ensemble(ens = Magdeburg[1:(90 + 1), -c(57,58)],
+#'     obs_col = 6, mem_col = 7:56)
+#' ar_ensemble(ens = Magdeburg48[1:(90 + 1), -c(57,58)],
+#'     obs_col = 6, mem_col = 7:56, skip = 1)
 #'
 ar_ensemble <- function(ens, obs_col, mem_col, train = 90, skip = 0) {
     if (!is.data.frame(ens)) 
@@ -145,10 +147,11 @@ ar_ensemble <- function(ens, obs_col, mem_col, train = 90, skip = 0) {
 #' \item{\code{mu}:}{ predictive mean}
 #' \item{\code{sd}:}{ predictive standard deviation}
 #' \item{\code{w}:}{ the weight corresponding to the first employed standard deviation}}
-#' and additional columns.
+#' and additional columns as given by \code{additional} when invoking \code{\link{ar_ensemble}}.
 #' @author J. Gross, A. Moeller.
 #' @examples
-#' mod <- ar_ensemble(Magdeburg[1:(90 + 30 + 1),], obs_col = 6, mem_col = 7:56)
+#' mod <- ar_ensemble(ens = Magdeburg[1:(90 + 30 + 1), -c(57,58)],
+#'     obs_col = 6, mem_col = 7:56)
 #' ar_preddistr(mod) # data frame of one row
 ar_preddistr <- function(ar_ens, train = 30) {
     if (!(class(ar_ens) == "ar_ens")) 
@@ -213,7 +216,8 @@ ar_preddistr <- function(ar_ens, train = 30) {
 #' @return A data frame.
 #' @author J. Gross, A. Moeller.
 #' @examples
-#' ensembleAR(Magdeburg[1:(90 + 30 + 1),], obs_col = 6, mem_col = 7:56)
+#' ensembleAR(ens = Magdeburg[1:(90 + 30 + 1), -c(57,58)],
+#'     obs_col = 6, mem_col = 7:56)
 #'
 ensembleAR <- function(ens, obs_col, mem_col, skip = 0, train_ar = 90, 
     train_crps = 30) {
